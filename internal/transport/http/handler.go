@@ -29,7 +29,10 @@ func NewHandler(service *comment.Service) *Handler {
 
 func LoggingMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Info("endpoint hit")
+		log.WithFields(log.Fields{
+			"Method": r.Method,
+			"URL":    r.URL.Path,
+		}).Info("handled request")
 		next.ServeHTTP(w, r)
 	})
 }
