@@ -1,20 +1,26 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
 	"github.com/VooDooStack/FitStackAPI/internal/database"
 	transportHTTP "github.com/VooDooStack/FitStackAPI/internal/transport/http"
+	log "github.com/sirupsen/logrus"
 )
 
-// contains things like db connection, routes, etc.
+// contains app information
 type App struct {
+	Name    string
+	Version string
 }
 
-func (a *App) Run() error {
-	fmt.Println("Setting up app...")
+func (app *App) Run() error {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.WithFields(log.Fields{
+		"AppName": app.Name,
+		"Version": app.Version,
+	}).Info("Starting FitStackAPI")
 
 	var err error
 	db, err := database.NewDatabase()
@@ -33,7 +39,7 @@ func (a *App) Run() error {
 	handler.SetupRoutes()
 
 	if err := http.ListenAndServe(":8080", handler.Router); err != nil {
-		fmt.Println("failed to setup server error:", err)
+		log.Error("Failed to set up server")
 		return err
 	}
 
@@ -41,10 +47,13 @@ func (a *App) Run() error {
 }
 
 func main() {
-	app := App{}
+	app := App{
+		Name:    "FitStackAPIDev",
+		Version: "0.0.1",
+	}
 	if err := app.Run(); err != nil {
-		fmt.Println("error starting server error:", err)
-		panic(err)
+		log.Error("error starting server error:", err)
+		log.Fatal(err)
 	}
 
 }
