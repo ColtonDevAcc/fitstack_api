@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
 	"github.com/VooDooStack/FitStackAPI/internal/database"
@@ -38,7 +40,8 @@ func (app *App) Run() error {
 	handler := transportHTTP.NewHandler(commentService)
 	handler.SetupRoutes()
 
-	if err := http.ListenAndServe(":8080", handler.Router); err != nil {
+	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
+	if err := http.ListenAndServe(port, handler.Router); err != nil {
 		log.Error("Failed to set up server")
 		return err
 	}
