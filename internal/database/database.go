@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 
 	"gorm.io/driver/postgres"
@@ -13,32 +14,29 @@ import (
 func mustGetenv(k string) string {
 	v := os.Getenv(k)
 	if v == "" {
-		log.Info("Warning: %s environment variable not set.\n", k)
+		log.Fatalf("Warning: %s environment variable not set.\n", k)
 	}
 	return v
 }
 
 func NewDatabase() (*gorm.DB, error) {
-	fmt.Println("Setting up database...")
-
-	var connectionString string
-	dbUsername := mustGetenv("DB_USERNAME")
-	dbPassword := mustGetenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbTable := os.Getenv("DB_TABLE")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-
-	if os.Getenv("LOCAL") == "" || os.Getenv("LOCAL") == "true" {
-		connectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", dbHost, dbPort, dbUsername, dbTable, dbPassword)
-	} else {
-		connectionString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", dbHost, dbUsername, dbPassword, dbName)
-
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
 	}
+	fmt.Println("Setting up database...")
+	var (
+		dbUser    = mustGetenv("DB_USER") // e.g. 'my-db-user'
+		dbPwd     = mustGetenv("DB_PASS") // e.g. 'my-db-password'
+		dbTCPHost = mustGetenv("DB_HOST") // e.g. '127.0.0.1' ('172.17.0.1' if deployed to GAE Flex)
+		dbPort    = mustGetenv("DB_PORT") // e.g. '5432'
+		dbName    = mustGetenv("DB_NAME") // e.g. 'my-database'
+	)
 
-	log.Info("connecting with the following connection string %s", connectionString)
+	dbURI := fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s", dbTCPHost, dbUser, dbPwd, dbPort, dbName)
+	log.Info("connecting with the following connection string %s", dbURI)
 
-	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
 	if err != nil {
 		fmt.Println("failed to setup database error:", err)
 		return db, err
