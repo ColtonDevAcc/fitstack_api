@@ -2,8 +2,9 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,7 +13,7 @@ import (
 func mustGetenv(k string) string {
 	v := os.Getenv(k)
 	if v == "" {
-		log.Fatalf("Warning: %s environment variable not set.\n", k)
+		log.Info("Warning: %s environment variable not set.\n", k)
 	}
 	return v
 }
@@ -39,6 +40,8 @@ func NewDatabase() (*gorm.DB, error) {
 	} else {
 		connectionString = fmt.Sprintf("%s:%s@unix(/%s/%s)/%s?parseTime=true", dbUsername, dbPassword, socketDir, instanceConnectionName, dbName)
 	}
+
+	log.Info("connecting with the following connection string %s", connectionString)
 
 	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if err != nil {
