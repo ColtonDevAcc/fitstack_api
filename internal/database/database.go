@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 
 	"gorm.io/driver/postgres"
@@ -20,10 +19,7 @@ func mustGetenv(k string) string {
 }
 
 func NewDatabase() (*gorm.DB, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+
 	fmt.Println("Setting up database...")
 	var (
 		dbUser    = mustGetenv("DB_USER") // e.g. 'my-db-user'

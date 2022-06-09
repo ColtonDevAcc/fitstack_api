@@ -8,6 +8,7 @@ import (
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
 	"github.com/VooDooStack/FitStackAPI/internal/database"
 	transportHTTP "github.com/VooDooStack/FitStackAPI/internal/transport/http"
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,6 +26,11 @@ func (app *App) Run() error {
 	}).Info("Starting FitStackAPI")
 
 	var err error
+	err = godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	db, err := database.NewDatabase()
 	if err != nil {
 		return err

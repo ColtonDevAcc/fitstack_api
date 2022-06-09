@@ -5,6 +5,7 @@
     "dgrijalva",
     "forbsey",
     "gorm",
+    "joho",
     "logrus",
     "sirupsen"
   ]
