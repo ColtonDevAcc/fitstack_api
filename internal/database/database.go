@@ -27,18 +27,13 @@ func NewDatabase() (*gorm.DB, error) {
 	dbHost := os.Getenv("DB_HOST")
 	dbTable := os.Getenv("DB_TABLE")
 	dbPort := os.Getenv("DB_PORT")
-	dbName := mustGetenv("DB_NAME")
-	instanceConnectionName := mustGetenv("INSTANCE_CONNECTION_NAME")
-	socketDir, isSet := os.LookupEnv("DB_SOCKET_DIR")
-
-	if !isSet {
-		socketDir = "/cloudsql"
-	}
+	dbName := os.Getenv("DB_NAME")
 
 	if os.Getenv("LOCAL") == "" || os.Getenv("LOCAL") == "true" {
 		connectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", dbHost, dbPort, dbUsername, dbTable, dbPassword)
 	} else {
-		connectionString = fmt.Sprintf("%s:%s@unix(/%s/%s)/%s?parseTime=true", dbUsername, dbPassword, socketDir, instanceConnectionName, dbName)
+		connectionString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", dbHost, dbUsername, dbPassword, dbName)
+
 	}
 
 	log.Info("connecting with the following connection string %s", connectionString)
