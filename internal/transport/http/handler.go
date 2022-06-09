@@ -5,70 +5,126 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
+// Handler - stores pointer to our comments service
 type Handler struct {
 	Router  *mux.Router
 	Service *comment.Service
 }
 
-//Response - returns a pointer to a Response struct
+// Response object
 type Response struct {
 	Message string
-	Error   error
+	Error   string
 }
 
+// NewHandler - returns a pointer to a Handler
 func NewHandler(service *comment.Service) *Handler {
 	return &Handler{
 		Service: service,
 	}
 }
 
-func LoggingMiddleWare(next http.Handler) http.Handler {
+// LoggingMiddleware - a handy middleware function that logs out incoming requests
+func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.WithFields(log.Fields{
-			"Method": r.Method,
-			"URL":    r.URL.Path,
-		}).Info("handled request")
+		log.WithFields(
+			log.Fields{
+				"Method": r.Method,
+				"Path":   r.URL.Path,
+			}).
+			Info("handled request")
 		next.ServeHTTP(w, r)
 	})
 }
 
-//! basic auth -- a handy middleware function that will provide basic auth for a given route
-func Auth(original func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+// BasicAuth - a handy middleware function that will provide basic auth around specific endpoints
+func BasicAuth(original func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Info("basic auth endpoint hit")
 		user, pass, ok := r.BasicAuth()
-		if !ok || user != "admin" || pass != "admin" {
+		if user == "admin" && pass == "password" && ok {
 			original(w, r)
-
 		} else {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			SendErrorResponse(w, "Unauthorized", errors.New("Unauthorized"))
-			original(w, r)
+			sendErrorResponse(w, "not authorized", errors.New("not authorized"))
 		}
 	}
 }
 
-func (h *Handler) SetupRoutes() {
-	fmt.Println("Setting up routes...")
-	h.Router = mux.NewRouter()
-	h.Router.Use(LoggingMiddleWare)
+// validateToken - validates an incoming jwt token
+func validateToken(accessToken string) bool {
+	var mySigningKey = []byte("missionimpossible")
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("There was an error")
+		}
+		return mySigningKey, nil
+	})
 
-	h.Router.HandleFunc("/comment/{id}", Auth(h.GetComment)).Methods("GET")
-	h.Router.HandleFunc("/comment", h.GetAllComment).Methods("GET")
-	h.Router.HandleFunc("/comment/{id}", Auth(h.DeleteComment)).Methods("DELETE")
-	h.Router.HandleFunc("/comment", Auth(h.PostComment)).Methods("POST")
-	h.Router.HandleFunc("/comment/{id}", Auth(h.UpdateComment)).Methods("PUT")
+	if err != nil {
+		return false
+	}
+
+	return token.Valid
+}
+
+// JWTAuth - a handy middleware function that will provide basic auth around specific endpoints
+func JWTAuth(original func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Info("jwt auth endpoint hit")
+		authHeader := r.Header["Authorization"]
+		if authHeader == nil {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			sendErrorResponse(w, "not authorized", errors.New("not authorized"))
+		}
+
+		authHeaderParts := strings.Split(authHeader[0], " ")
+		if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			sendErrorResponse(w, "not authorized", errors.New("not authorized"))
+		}
+
+		if validateToken(authHeaderParts[1]) {
+			original(w, r)
+		} else {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			sendErrorResponse(w, "not authorized", errors.New("not authorized"))
+		}
+	}
+}
+
+// SetupRoutes - sets up all the routes for our application
+func (h *Handler) SetupRoutes() {
+	log.Info("Setting Up Routes")
+	h.Router = mux.NewRouter()
+	h.Router.Use(LoggingMiddleware)
+
+	h.Router.HandleFunc("/api/comment", h.GetAllComments).Methods("GET")
+	h.Router.HandleFunc("/api/comment", JWTAuth(h.PostComment)).Methods("POST")
+	h.Router.HandleFunc("/api/comment/{id}", h.GetComment).Methods("GET")
+	h.Router.HandleFunc("/api/comment/{id}", JWTAuth(h.UpdateComment)).Methods("PUT")
+	h.Router.HandleFunc("/api/comment/{id}", JWTAuth(h.DeleteComment)).Methods("DELETE")
 
 	h.Router.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(Response{Message: "OK"}); err != nil {
+		if err := json.NewEncoder(w).Encode(Response{Message: "I am Alive!"}); err != nil {
 			panic(err)
 		}
 	})
+}
+
+func sendErrorResponse(w http.ResponseWriter, message string, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	if err := json.NewEncoder(w).Encode(Response{Message: message, Error: err.Error()}); err != nil {
+		panic(err)
+	}
 }
