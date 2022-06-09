@@ -2,22 +2,31 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+func mustGetenv(k string) string {
+	v := os.Getenv(k)
+	if v == "" {
+		log.Fatalf("Warning: %s environment variable not set.\n", k)
+	}
+	return v
+}
+
 func NewDatabase() (*gorm.DB, error) {
 	fmt.Println("Setting up database...")
 
 	var connectionString string
-	dbUsername := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbTable := os.Getenv("DB_TABLE")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
+	dbUsername := mustGetenv("DB_USERNAME")
+	dbPassword := mustGetenv("DB_PASSWORD")
+	dbHost := mustGetenv("DB_HOST")
+	dbTable := mustGetenv("DB_TABLE")
+	dbPort := mustGetenv("DB_PORT")
+	dbName := mustGetenv("DB_NAME")
 	instanceConnectionName := os.Getenv("INSTANCE_CONNECTION_NAME")
 	socketDir, isSet := os.LookupEnv("DB_SOCKET_DIR")
 
