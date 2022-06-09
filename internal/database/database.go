@@ -23,11 +23,11 @@ func NewDatabase() (*gorm.DB, error) {
 	var connectionString string
 	dbUsername := mustGetenv("DB_USERNAME")
 	dbPassword := mustGetenv("DB_PASSWORD")
-	dbHost := mustGetenv("DB_HOST")
-	dbTable := mustGetenv("DB_TABLE")
-	dbPort := mustGetenv("DB_PORT")
+	dbHost := os.Getenv("DB_HOST")
+	dbTable := os.Getenv("DB_TABLE")
+	dbPort := os.Getenv("DB_PORT")
 	dbName := mustGetenv("DB_NAME")
-	instanceConnectionName := os.Getenv("INSTANCE_CONNECTION_NAME")
+	instanceConnectionName := mustGetenv("INSTANCE_CONNECTION_NAME")
 	socketDir, isSet := os.LookupEnv("DB_SOCKET_DIR")
 
 	if !isSet {
