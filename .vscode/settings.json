@@ -1,3 +1,11 @@
 {
-  "cSpell.words": ["dgrijalva", "forbsey", "logrus", "sirupsen"]
+  "cSpell.words": [
+    "cloudsql",
+    "dbname",
+    "dgrijalva",
+    "forbsey",
+    "gorm",
+    "logrus",
+    "sirupsen"
+  ]
 }
