@@ -2,175 +2,115 @@ package http
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 
+	"github.com/VooDooStack/FitStackAPI/internal/auth"
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
-	"github.com/gorilla/mux"
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	_ "github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
+// Handler - stores pointer to our comments service
 type Handler struct {
-	Router  *mux.Router
+	Router  *gin.Engine
 	Service *comment.Service
 }
 
-//Response - returns a pointer to a Response struct
+// Response object
 type Response struct {
 	Message string
-	Error   error
+	Error   string
 }
 
+// NewHandler - returns a pointer to a Handler
 func NewHandler(service *comment.Service) *Handler {
 	return &Handler{
 		Service: service,
 	}
 }
 
-func (h *Handler) SetupRoutes() {
-	fmt.Println("Setting up routes...")
-	h.Router = mux.NewRouter()
+// LoggingMiddleware - a handy middleware function that logs out incoming requests
+func LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.WithFields(
+			log.Fields{
+				"Method": r.Method,
+				"Path":   r.URL.Path,
+			}).
+			Info("handled request")
+		next.ServeHTTP(w, r)
+	})
+}
 
-	h.Router.HandleFunc("/comment/{id}", h.GetComment).Methods("GET")
-	h.Router.HandleFunc("/comment", h.GetAllComment).Methods("GET")
-	h.Router.HandleFunc("/comment/{id}", h.DeleteComment).Methods("DELETE")
-	h.Router.HandleFunc("/comment", h.PostComment).Methods("POST")
-	h.Router.HandleFunc("/comment/{id}", h.UpdateComment).Methods("PUT")
+// BasicAuth - a handy middleware function that will provide basic auth around specific endpoints
+func BasicAuth(original func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Info("basic auth endpoint hit")
+		user, pass, ok := r.BasicAuth()
+		if user == "admin" && pass == "password" && ok {
+			original(w, r)
+		} else {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			sendErrorResponse(w, "not authorized", errors.New("not authorized"))
+		}
+	}
+}
 
-	h.Router.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+// validateToken - validates an incoming jwt token
+func validateToken(accessToken string) bool {
+	var mySigningKey = []byte("missionimpossible")
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("There was an error")
+		}
+		return mySigningKey, nil
+	})
+
+	if err != nil {
+		return false
+	}
+
+	return token.Valid
+}
+
+// SetupRoutes - sets up all the routes for our application
+func (h *Handler) SetupRoutes() *gin.Engine {
+	client, err := auth.InitAuth()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Info("Setting Up Routes")
+	// initialize new gin engine (for server)
+	h.Router = gin.Default()
+
+	// setup our routes
+	versioned := h.Router.Group("/v1/")
+	h.Router.Use(auth.AuthJWT(client))
+
+	versioned.GET("/api/comment", h.GetAllComments).Methods("GET")
+	versioned.POST("/api/comment", JWTAuth(h.PostComment)).Methods("POST")
+	versioned.GET("/api/comment/{id}", h.GetComment).Methods("GET")
+	versioned.PUT("/api/comment/{id}", JWTAuth(h.UpdateComment)).Methods("PUT")
+	versioned.DELETE("/api/comment/{id}", JWTAuth(h.DeleteComment)).Methods("DELETE")
+	versioned.GET("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(Response{Message: "OK"}); err != nil {
+		if err := json.NewEncoder(w).Encode(Response{Message: "I am Alive!"}); err != nil {
 			panic(err)
 		}
 	})
+
+	return h.Router
 }
 
-//get comment
-func (h *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	i, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		fmt.Println("error getting comment error:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	comment, err := h.Service.GetComment(uint(i))
-	if err != nil {
-		SendErrorResponse(w, "error getting comment:", err)
-		return
-	}
-
-	if err := json.NewEncoder(w).Encode(comment); err != nil {
-		panic(err)
-	}
-	fmt.Fprintf(w, "%+v\n", comment)
-}
-
-//get all comments
-func (h *Handler) GetAllComment(w http.ResponseWriter, r *http.Request) {
-	comments, err := h.Service.GetAllComments()
-	if err != nil {
-		fmt.Println("error getting all comments:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if err := json.NewEncoder(w).Encode(comments); err != nil {
-		panic(err)
-	}
-}
-
-//delete comment
-func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	i, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		fmt.Println("error deleting comment error:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	err = h.Service.DeleteComment(uint(i))
-	if err != nil {
-		fmt.Println("error deleting comment:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintf(w, "comment deleted\n")
-}
-
-//post comment
-func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	var comment comment.Comment
-	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
-		fmt.Println("error decoding comment:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	comment, err := h.Service.PostComment(comment)
-	if err != nil {
-		SendErrorResponse(w, "error posting comment:", err)
-	}
-
-	if err := json.NewEncoder(w).Encode(comment); err != nil {
-		panic(err)
-	}
-}
-
-//update comment
-func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	i, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		fmt.Println("error updating comment error:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	comment, err := h.Service.UpdateComment(uint(i), comment.Comment{
-		Slug: "/new",
-	})
-	if err != nil {
-		fmt.Println("error updating comment:", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	//! updated function to send responses
-	if err = sendOkResponse(w, comment); err != nil {
-		panic(err)
-	}
-}
-
-func sendOkResponse(w http.ResponseWriter, resp interface{}) error {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	return json.NewEncoder(w).Encode(resp)
-}
-
-func SendErrorResponse(w http.ResponseWriter, message string, err error) {
+func sendErrorResponse(w http.ResponseWriter, message string, err error) {
 	w.WriteHeader(http.StatusInternalServerError)
-	if err := json.NewEncoder(w).Encode(Response{Message: message, Error: err}); err != nil {
+	if err := json.NewEncoder(w).Encode(Response{Message: message, Error: err.Error()}); err != nil {
 		panic(err)
 	}
 }

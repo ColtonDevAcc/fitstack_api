@@ -3,7 +3,7 @@ package comment
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Service - our comment service

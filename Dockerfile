@@ -9,5 +9,3 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o app cmd/server/main.go
 FROM alpine:latest AS production
 COPY --from=builder /app .
 CMD ["./app"]
-
-#docker build -t fitstackapi .

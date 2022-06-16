@@ -3,28 +3,29 @@ version: "3.8"
 services:
   db:
     image: postgres:12.2-alpine
-    container_name: "database"
+    container_name: "comments-database"
     ports:
       - "5432:5432"
-    environment: 
-      - POSTGRES_DB=${DB_TABLE:?err}
-      - POSTGRES_USER=${DB_USERNAME:?err}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:?err}
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     networks:
       - fullstack
     volumes:
       - database_postgres:/var/lib/postgresql/data
-
+  
   api:
     build: .
-    container_name: "rest-api"
+    container_name: "comments-rest-api"
     environment:
-      - DB_USERNAME=${DB_USERNAME:?err}
-      - DB_PASSWORD=${DB_PASSWORD:?err}
-      - DB_DB=${DB_TABLE:?err}
-      - DB_HOST=db
-      - DB_TABLE=${DB_TABLE:?err}
-      - DB_PORT=5432
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_DB: "postgres"
+      DB_HOST: "db"
+      DB_TABLE: "postgres"
+      DB_PORT: "5432"
+      SSL_MODE: "disable"
     ports:
       - "8080:8080"
     depends_on: 
@@ -38,5 +39,3 @@ volumes:
 networks:
   fullstack:
     driver: bridge
-
-#docker-compose up -d 

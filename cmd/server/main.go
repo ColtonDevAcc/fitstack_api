@@ -2,21 +2,36 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+	"os"
 
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
 	"github.com/VooDooStack/FitStackAPI/internal/database"
 	transportHTTP "github.com/VooDooStack/FitStackAPI/internal/transport/http"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
 )
 
-// contains things like db connection, routes, etc.
+// contains app information
 type App struct {
+	Name    string
+	Version string
 }
 
-func (a *App) Run() error {
-	fmt.Println("Setting up app...")
+func (app *App) Run() error {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.WithFields(log.Fields{
+		"AppName": app.Name,
+		"Version": app.Version,
+	}).Info("Starting FitStackAPI")
 
 	var err error
+
+	err = godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	db, err := database.NewDatabase()
 	if err != nil {
 		return err
@@ -30,21 +45,33 @@ func (a *App) Run() error {
 	commentService := comment.NewService(db)
 
 	handler := transportHTTP.NewHandler(commentService)
-	handler.SetupRoutes()
+	h := handler.SetupRoutes()
 
-	if err := http.ListenAndServe(":8080", handler.Router); err != nil {
-		fmt.Println("failed to setup server error:", err)
-		return err
-	}
+	// set db to gin context with a middleware to all incoming request
+	h.Use(func(c *gin.Context) {
+		c.Set("db", db)
+	})
 
+	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.Run(port)
 	return nil
 }
 
 func main() {
-	app := App{}
+	app := App{
+		Name:    "FitStackAPIDev",
+		Version: "0.0.1",
+	}
+
 	if err := app.Run(); err != nil {
-		fmt.Println("error starting server error:", err)
-		panic(err)
+		log.Error("error starting server error:", err)
+		log.Fatal(err)
 	}
 
 }
