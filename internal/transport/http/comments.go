@@ -6,28 +6,26 @@ import (
 	"strconv"
 
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 )
 
 // GetComment - retrieve a comment by ID
-func (h *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+func (h *Handler) GetComment(c *gin.Context) {
+	c.Header(http)
 	vars := mux.Vars(r)
 	id := vars["id"]
 
 	i, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		sendErrorResponse(w, "Unable to parse UINT from ID", err)
+		sendErrorResponse(c, "Unable to parse UINT from ID", err)
 	}
 	comment, err := h.Service.GetComment(uint(i))
 	if err != nil {
-		sendErrorResponse(w, "Error Retrieving Comment By ID", err)
+		sendErrorResponse(c, "Error Retrieving Comment By ID", err)
 	}
 
-	if err := json.NewEncoder(w).Encode(comment); err != nil {
-		panic(err)
-	}
+	c.JSON(http.StatusOK, gin.H{"comment": comment})
 }
 
 // GetAllComments - retrieves all comments from the comment service
