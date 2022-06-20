@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/VooDooStack/FitStackAPI/datastore"
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
+<<<<<<< Updated upstream
 	"github.com/VooDooStack/FitStackAPI/internal/database"
 	transportHTTP "github.com/VooDooStack/FitStackAPI/internal/transport/http"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
+=======
+	transportHTTP "github.com/VooDooStack/FitStackAPI/router"
+>>>>>>> Stashed changes
 )
 
 // contains app information
@@ -26,6 +31,7 @@ func (app *App) Run() error {
 	}).Info("Starting FitStackAPI")
 
 	var err error
+<<<<<<< Updated upstream
 
 	err = godotenv.Load(".env")
 	if err != nil {
@@ -33,11 +39,14 @@ func (app *App) Run() error {
 	}
 
 	db, err := database.NewDatabase()
+=======
+	db, err := datastore.NewDatabase()
+>>>>>>> Stashed changes
 	if err != nil {
 		return err
 	}
 
-	err = database.MigrateDB(db)
+	err = datastore.MigrateDB(db)
 	if err != nil {
 		return err
 	}

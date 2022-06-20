@@ -1,4 +1,4 @@
-package database
+package datastore
 
 import (
 	"github.com/VooDooStack/FitStackAPI/internal/comment"

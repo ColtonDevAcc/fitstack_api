@@ -9,6 +9,7 @@ require (
 )
 
 require (
+<<<<<<< Updated upstream
 	cloud.google.com/go v0.100.2 // indirect
 	cloud.google.com/go/compute v1.6.1 // indirect
 	cloud.google.com/go/firestore v1.6.1 // indirect
@@ -51,6 +52,11 @@ require (
 	google.golang.org/grpc v1.47.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+=======
+	github.com/google/go-cmp v0.5.5 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
+	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
+>>>>>>> Stashed changes
 )
 
 require (
@@ -59,9 +65,14 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/jinzhu/inflection v1.0.0 // indirect
+<<<<<<< Updated upstream
 	github.com/joho/godotenv v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	gorm.io/driver/postgres v1.3.7
+=======
+	github.com/lib/pq v1.1.1 // indirect
+	gorm.io/gorm v1.23.6
+>>>>>>> Stashed changes
 	gotest.tools/v3 v3.2.0
 )
