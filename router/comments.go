@@ -1,4 +1,4 @@
-package http
+package router
 
 import (
 	"encoding/json"
@@ -7,102 +7,86 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/internal/comment"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/mux"
 )
 
 // GetComment - retrieve a comment by ID
 func (h *Handler) GetComment(c *gin.Context) {
-	c.Header(http)
-	vars := mux.Vars(r)
-	id := vars["id"]
+	id := c.Param("id")
 
 	i, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		sendErrorResponse(c, "Unable to parse UINT from ID", err)
+		c.JSON(http.StatusInternalServerError, "Failed to parse json body")
 	}
 	comment, err := h.Service.GetComment(uint(i))
 	if err != nil {
-		sendErrorResponse(c, "Error Retrieving Comment By ID", err)
+		c.JSON(http.StatusInternalServerError, "failed to get comment by ID")
 	}
 
 	c.JSON(http.StatusOK, gin.H{"comment": comment})
 }
 
 // GetAllComments - retrieves all comments from the comment service
-func (h *Handler) GetAllComments(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+func (h *Handler) GetAllComments(c *gin.Context) {
 	comments, err := h.Service.GetAllComments()
 	if err != nil {
-		sendErrorResponse(w, "Failed to retrieve all comments", err)
+		c.JSON(http.StatusInternalServerError, "Failed to retrieve all comments")
 	}
-	if err := json.NewEncoder(w).Encode(comments); err != nil {
-		panic(err)
-	}
+
+	c.JSON(http.StatusOK, comments)
 }
 
 // PostComment - adds a new comment
-func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+func (h *Handler) PostComment(c *gin.Context) {
 
 	var comment comment.Comment
-	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
-		sendErrorResponse(w, "Failed to decode JSON Body", err)
+	if err := json.NewDecoder(c.Request.Body).Decode(&comment); err != nil {
+		c.JSON(http.StatusInternalServerError, "Failed to decode JSON Body")
 	}
 
 	comment, err := h.Service.PostComment(comment)
 	if err != nil {
-		sendErrorResponse(w, "Failed to post new comment", err)
+		c.JSON(http.StatusInternalServerError, "Failed to post new comment")
 	}
-	if err := json.NewEncoder(w).Encode(comment); err != nil {
-		panic(err)
-	}
+
+	c.JSON(http.StatusOK, comment)
 }
 
 // UpdateComment - updates a comment by ID
-func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+func (h *Handler) UpdateComment(c *gin.Context) {
+	id := c.Param("id")
 
-	vars := mux.Vars(r)
-	id := vars["id"]
 	commentID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		sendErrorResponse(w, "Failed to parse uint from ID", err)
+		c.JSON(http.StatusInternalServerError, "Failed to parse uint from ID")
 	}
 
 	var comment comment.Comment
-	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
-		sendErrorResponse(w, "Failed to decode JSON Body", err)
+	if err := json.NewDecoder(c.Request.Body).Decode(&comment); err != nil {
+		c.JSON(http.StatusInternalServerError, "Failed to decode JSON Body")
+
 	}
 
 	comment, err = h.Service.UpdateComment(uint(commentID), comment)
 	if err != nil {
-		sendErrorResponse(w, "Failed to update comment", err)
+		c.JSON(http.StatusInternalServerError, "Failed to update comment")
 	}
-	if err := json.NewEncoder(w).Encode(comment); err != nil {
-		panic(err)
-	}
+
+	c.JSON(http.StatusOK, comment)
 }
 
 // DeleteComment - deletes a comment by ID
-func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	vars := mux.Vars(r)
-	id := vars["id"]
+func (h *Handler) DeleteComment(c *gin.Context) {
+	id := c.Param("id")
 	commentID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		sendErrorResponse(w, "Failed to parse uint from ID", err)
+		c.JSON(http.StatusInternalServerError, "Failed to parse uint from ID")
+
 	}
 
 	err = h.Service.DeleteComment(uint(commentID))
 	if err != nil {
-		sendErrorResponse(w, "Failed to delete comment by comment ID", err)
+		c.JSON(http.StatusInternalServerError, "Failed to delete comment by comment ID")
 	}
 
-	if err := json.NewEncoder(w).Encode(Response{Message: "Successfully Deleted"}); err != nil {
-		panic(err)
-	}
+	//TODO: return a 204 status code
 }

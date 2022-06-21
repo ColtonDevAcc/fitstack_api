@@ -1,10 +1,8 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/VooDooStack/FitStackAPI/domain/model"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 
 	"github.com/VooDooStack/FitStackAPI/usecase/interactor"
 )
@@ -14,14 +12,14 @@ type userController struct {
 }
 
 type UserController interface {
-	GetUsers(c mux.Router) error
+	GetUsers(c gin.Context) error
 }
 
 func NewUserController(us interactor.UserInteractor) UserController {
 	return &userController{us}
 }
 
-func (uc *userController) GetUsers(c mux.Router) error {
+func (uc *userController) GetUsers(c gin.Context) error {
 	var u []*model.User
 
 	u, err := uc.userInteractor.Get(u)
@@ -29,5 +27,7 @@ func (uc *userController) GetUsers(c mux.Router) error {
 		return err
 	}
 
-	return Json(http.StatusOK, u)
+	c.JSON(200, u)
+
+	return nil
 }
