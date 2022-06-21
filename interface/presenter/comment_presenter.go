@@ -5,18 +5,18 @@ package presenter
 
 import "github.com/VooDooStack/FitStackAPI/domain/model"
 
-type userPresenter struct {
+type commentPresenter struct {
 }
 
-type UserPresenter interface {
-	ResponseUsers(us []*model.User) []*model.User
+type CommentPresenter interface {
+	ResponseComments(us []*model.Comment) []*model.Comment
 }
 
-func NewUserPresenter() UserPresenter {
-	return &userPresenter{}
+func NewCommentPresenter() UserPresenter {
+	return &commentPresenter{}
 }
 
-func (up *userPresenter) ResponseUsers(us []*model.User) []*model.User {
+func (up *commentPresenter) ResponseUsers(us []*model.Comment) []*model.Comment {
 	for _, u := range us {
 		u.FirstName = "Mr." + u.FirstName
 	}
