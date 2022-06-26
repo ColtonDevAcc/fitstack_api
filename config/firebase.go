@@ -24,7 +24,7 @@ func SetupFirebase() *auth.Client {
 	//Firebase Auth
 	auth, err := app.Auth(context.Background())
 	if err != nil {
-		panic("Firebase load error")
+		panic(err)
 	}
 	return auth
 }

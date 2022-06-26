@@ -5,13 +5,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Connect to server",
+      "name": "Launch Package",
       "type": "go",
-      "request": "attach",
-      "mode": "remote",
-      "remotePath": "${workspaceFolder}",
-      "port": 8080,
-      "host": "localhost"
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/api/main.go"
     }
   ]
 }
