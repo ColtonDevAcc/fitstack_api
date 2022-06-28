@@ -2,35 +2,32 @@ package database
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/VooDooStack/FitStackAPI/config"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/driver/postgres"
+	_ "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func NewDatabase(config config.Config) (*gorm.DB, error) {
 	fmt.Println("Setting up database...")
 
 	//!TODO: this should be replaced by config
-	dbUsername := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbTable := os.Getenv("DB_TABLE")
-	dbPort := os.Getenv("DB_PORT")
+	dbUsername := MustGetenv("DB_USERNAME")
+	dbPassword := MustGetenv("DB_PASSWORD")
+	dbHost := MustGetenv("DB_HOST")
+	dbName := MustGetenv("DB_NAME")
+	dbPort := MustGetenv("DB_PORT")
 
-	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", dbHost, dbPort, dbUsername, dbTable, dbPassword)
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", dbHost, dbPort, dbUsername, dbName, dbPassword)
 
-	db, err := gorm.Open("postgres", connectionString)
+	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		fmt.Println("failed to setup database error:", err)
 		return db, err
 	}
 
-	if err := db.DB().Ping(); err != nil {
-		fmt.Println("failed to ping database error:", err)
-		return db, err
-	}
-
 	return db, nil
 }
+
+//go.sum,Dockerfile,*.yaml,*.json,.gitignore,.gcloudignore,.env,*.md,Makefile

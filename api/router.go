@@ -1,21 +1,27 @@
-package main
+package api
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func NewRouter() *gin.Engine {
+func NewRouter(db *gorm.DB, firebaseAuth any) *gin.Engine {
+	fmt.Println("Setting up router...")
 	r := gin.Default()
+	gin.SetMode(os.Getenv("GIN_MODE"))
+	r.SetTrustedProxies([]string{"192.168.1.2"})
 
-	r.GET("/", func(c *gin.Context) {
-		fmt.Print("Healthy")
+	//! set db & firebase auth to gin context with a middleware to all incoming requests
+	r.Use(func(c *gin.Context) {
+		c.Set("db", db)
+		c.Set("firebaseAuth", firebaseAuth)
 	})
 
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	r.Use(gin.Recovery())
-	r.Use(gin.Logger())
+	//setup handlers
+	setUpHandlers(r)
 
 	return r
 }

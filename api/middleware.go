@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AuthMiddleware : to verify all authorized operations
 // AuthMiddleware : to verify all authorized operations
 func AuthMiddleware(c *gin.Context) {
 	firebaseAuth := c.MustGet("firebaseAuth").(*auth.Client)
