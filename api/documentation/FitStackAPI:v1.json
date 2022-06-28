@@ -1,0 +1,93 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2022-06-28T18:44:09.771Z",
+  "__export_source": "insomnia.desktop.app:v2022.1.1",
+  "resources": [
+    {
+      "_id": "req_b98b9defa5e343b3b2ce9f15f261b8b5",
+      "parentId": "fld_ff9d6a1b8f204a72922055f9d5512eea",
+      "modified": 1656441788981,
+      "created": 1656441788981,
+      "url": "",
+      "name": "User_Login",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1656441788981,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_ff9d6a1b8f204a72922055f9d5512eea",
+      "parentId": "wrk_47b06e72665b4f98ab324d2d39628756",
+      "modified": 1656441775179,
+      "created": 1656441775179,
+      "name": "User",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1656441775179,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_47b06e72665b4f98ab324d2d39628756",
+      "parentId": null,
+      "modified": 1656441575415,
+      "created": 1656441575415,
+      "name": "New Document",
+      "description": "",
+      "scope": "design",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_9275386bdd146c5399011d77c113b81d7d7925b2",
+      "parentId": "wrk_47b06e72665b4f98ab324d2d39628756",
+      "modified": 1656441575423,
+      "created": 1656441575423,
+      "name": "Base Environment",
+      "data": {},
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1656441575423,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_9275386bdd146c5399011d77c113b81d7d7925b2",
+      "parentId": "wrk_47b06e72665b4f98ab324d2d39628756",
+      "modified": 1656441575425,
+      "created": 1656441575425,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    },
+    {
+      "_id": "spc_72f7973ce73a490a8a11e365f4b6f0f3",
+      "parentId": "wrk_47b06e72665b4f98ab324d2d39628756",
+      "modified": 1656441737619,
+      "created": 1656441575421,
+      "fileName": "FitStackAPI/v1",
+      "contents": "",
+      "contentType": "yaml",
+      "_type": "api_spec"
+    },
+    {
+      "_id": "uts_7730523aff604e04ad7a9c486072d78f",
+      "parentId": "wrk_47b06e72665b4f98ab324d2d39628756",
+      "modified": 1656441575428,
+      "created": 1656441575428,
+      "name": "Example Test Suite",
+      "_type": "unit_test_suite"
+    }
+  ]
+}

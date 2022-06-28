@@ -3,6 +3,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	firebase "firebase.google.com/go"
@@ -23,12 +24,14 @@ func SetupFirebase() (*auth.Client, error) {
 	//Firebase admin SDK initialization
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
+		fmt.Println("failed to initialize firebase admin sdk")
 		return nil, err
 	}
 
 	//Firebase Auth
 	auth, err := app.Auth(context.Background())
 	if err != nil {
+		fmt.Println("failed to generate firebase auth")
 		return nil, err
 	}
 

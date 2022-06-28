@@ -7,17 +7,17 @@ import (
 
 // https://github.com/VooDooStack/FitStackAPI/blob/dev/router/router.go
 
-func setUpHandlers(router *gin.Engine) {
-	router.GET("/ping", func(c *gin.Context) {
+func setUpHandlers(router *gin.Engine, v *gin.RouterGroup) {
+	v.GET("/ping", func(c *gin.Context) {
 		firebaseAuth := c.MustGet("firebaseAuth").(*auth.Client)
 
 		c.JSON(200, gin.H{
 			"message": "pong",
 			"auth":    firebaseAuth,
 		})
-	}).Use(AuthMiddleware)
+	}) //.Use(middleware.AuthMiddleware)
 
-	router.GET("/", func(c *gin.Context) {
+	v.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "home",
 		})
