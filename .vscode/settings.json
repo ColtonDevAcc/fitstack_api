@@ -1,5 +1,4 @@
 {
-<<<<<<< Updated upstream
   "cSpell.words": [
     "cloudsql",
     "dbname",
@@ -10,7 +9,4 @@
     "logrus",
     "sirupsen"
   ]
-=======
-  "cSpell.words": ["Interactor", "resty"]
->>>>>>> Stashed changes
 }
