@@ -1,9 +1,9 @@
 _id: req_3c3024c30ba042679bb8b9127f262ca4
 type: Request
 parentId: fld_b71ea698057a4562ae1a4151d830a88d
-modified: 1656465527328
+modified: 1656465590359
 created: 1656465521686
-url: ""
+url: https://localhost:4000/v1/ping
 name: User_Login
 description: ""
 method: GET
