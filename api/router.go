@@ -21,16 +21,11 @@ func NewRouter(db *gorm.DB, firebaseAuth any) *gin.Engine {
 	r := gin.Default()
 
 	v := r.Group("/v1")
-	v.Use(middleware.AuthJWT(client))
+	// authGroup := r.Group("/auth")
 
+	v.Use(middleware.AuthJWT(client))
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	r.SetTrustedProxies([]string{"192.168.1.2"})
-
-	// //! set db & firebase auth to gin context with a middleware to all incoming requests
-	// r.Use(func(c *gin.Context) {
-	// 	c.Set("db", db)
-	// 	c.Set("firebaseAuth", firebaseAuth)
-	// })
 
 	setUpHandlers(r, v)
 

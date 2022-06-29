@@ -7,6 +7,7 @@ import (
 
 // https://github.com/VooDooStack/FitStackAPI/blob/dev/router/router.go
 
+//! TODO: better var names for groups
 func setUpHandlers(router *gin.Engine, v *gin.RouterGroup) {
 	v.GET("/ping", func(c *gin.Context) {
 		firebaseAuth := c.MustGet("firebaseAuth").(*auth.Client)
@@ -22,4 +23,5 @@ func setUpHandlers(router *gin.Engine, v *gin.RouterGroup) {
 			"message": "home",
 		})
 	})
+
 }
