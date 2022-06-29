@@ -1,13 +1,14 @@
 package database
 
 import (
-	"github.com/VooDooStack/FitStackAPI/internal/comment"
+	"os/user"
+
 	"github.com/jinzhu/gorm"
 )
 
 // MigrateDB - migrates our database and creates our comment table
 func MigrateDB(db *gorm.DB) error {
-	if result := db.AutoMigrate(&comment.Comment{}); result.Error != nil {
+	if result := db.AutoMigrate(&user.User{}); result.Error != nil {
 		return result.Error
 	}
 
