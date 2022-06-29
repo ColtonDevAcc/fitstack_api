@@ -1,9 +1,9 @@
-_id: req_3c3024c30ba042679bb8b9127f262ca4
+_id: req_d5972d5384ed4458ae147cdafb4d8a92
 type: Request
-parentId: fld_b71ea698057a4562ae1a4151d830a88d
-modified: 1656475346261
-created: 1656465521686
-url: http://localhost:4000/v1/ping
+parentId: fld_732fa8fd780f4f4f97cef773bae9646f
+modified: 1656476056968
+created: 1656475108149
+url: http://dev.fitstack.io//v1/ping
 name: API_Ping
 description: ""
 method: GET
@@ -11,7 +11,7 @@ body: {}
 parameters: []
 headers: []
 authentication: {}
-metaSortKey: -1656465521686
+metaSortKey: -1656475108149
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
