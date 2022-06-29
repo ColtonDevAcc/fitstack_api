@@ -24,15 +24,13 @@ func SetupFirebase() (*auth.Client, error) {
 	//Firebase admin SDK initialization
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		fmt.Println("failed to initialize firebase admin sdk")
-		return nil, err
+		panic(fmt.Sprintf("error initializing app: %v", err))
 	}
 
 	//Firebase Auth
 	auth, err := app.Auth(context.Background())
 	if err != nil {
-		fmt.Println("failed to generate firebase auth")
-		return nil, err
+		panic(fmt.Sprintf("error initializing app: %v", err))
 	}
 
 	return auth, nil
