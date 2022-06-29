@@ -16,8 +16,10 @@ func SetupFirebase() (*auth.Client, error) {
 
 	file := os.Getenv("FIREBASE_CREDENTIALS_FILE")
 	if len(file) == 0 {
+		fmt.Println("init firebase using default credentials file")
 		opt = nil
 	} else {
+		fmt.Println("init firebase using specified credentials file")
 		opt = option.WithCredentialsFile(file)
 	}
 
