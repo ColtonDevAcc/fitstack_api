@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -22,22 +21,10 @@ func run() error {
 	godotenv.Load(".env")
 	var cfg config.Config
 
-	flag.IntVar(&cfg.Port, "port", 4000, "Server port to listen on")
-	flag.StringVar(&cfg.Env, "env", "development", "Application environment (development|production")
-	flag.StringVar(&cfg.DbConnection, "dsn", "postgres://tcs@localhost/go_movies?sslmode=disable", "Postgres connection string")
-	flag.Parse()
+	cfg.Port = os.Getenv("PORT")
+	cfg.Env = os.Getenv("ENV")
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-
-	//! configure firebase
-	//! Request must have the following
-	//! Authorization: Bearer {{user_firebase_token}}
-	firebaseAuth, err := config.SetupFirebase()
-	if err != nil {
-		logger.Fatal(err)
-
-		return err
-	}
 
 	db, err := database.NewDatabase(cfg)
 	if err != nil {
@@ -46,9 +33,10 @@ func run() error {
 	}
 
 	//create router
-	http := api.NewRouter(db, firebaseAuth)
+	http := api.NewRouter(db)
 
-	err = http.Run(fmt.Sprintf(":%d", cfg.Port))
+	// flag.IntVar(&cfg.Port, "port", 4000, "Server port to listen on")
+	err = http.Run(fmt.Sprintf(":%s", cfg.Port))
 	if err != nil {
 		logger.Fatal(err)
 		return err

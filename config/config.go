@@ -7,9 +7,8 @@ import (
 )
 
 type Config struct {
-	Port         int
-	Env          string
-	DbConnection string
+	Port string
+	Env  string
 }
 
 type Application struct {
