@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewRouter(db *gorm.DB, firebaseAuth any) *gin.Engine {
+func NewRouter(db *gorm.DB) *gin.Engine {
 	client, err := config.SetupFirebase()
 	if err != nil {
 		log.Fatalln("failed to init firebase auth", err)
