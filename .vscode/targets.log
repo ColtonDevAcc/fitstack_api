@@ -1,217 +1,154 @@
-make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
-# GNU Make 4.3
-# Built for Windows32
-# Copyright (C) 1988-2020 Free Software Foundation, Inc.
-# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-# This is free software: you are free to change and redistribute it.
-# There is NO WARRANTY, to the extent permitted by law.
+# This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Tue Jun 28 21:47:41 2022
+# Make data base, printed on Sat Jul 16 18:54:20 2022
 
 # Variables
 
-# environment
-SYSTEMDRIVE = C:
-# environment
-LC_ALL = C
-# environment
-USERPROFILE = C:\Users\cbris
-# environment
-LOCALAPPDATA = C:\Users\cbris\AppData\Local
-# environment
-VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-28e02d0b-f563-49b1-a552-332259b0320c-sock
-# environment
-VSCODE_CWD = C:\Users\cbris\AppData\Local\Programs\Microsoft VS Code
-# environment
-CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
-# environment
-SYSTEMROOT = C:\WINDOWS
-# environment
-PROCESSOR_LEVEL = 23
-# environment
-PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
-# default
-MAKE_COMMAND := C:/ProgramData/chocolatey/lib/make/tools/install/bin/make.exe
-# environment
-GOPATH = C:\Users\cbris\go
 # automatic
-@D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
-# environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_4440_EZXKVNWMECUHPKYR
-# environment
-VSCODE_HANDLES_UNCAUGHT_ERRORS = true
-# default
-.VARIABLES := 
+<D = $(patsubst %/,%,$(dir $<))
 # automatic
-%D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
+?F = $(notdir $?)
 # automatic
-^D = $(patsubst %/,%,$(patsubst %\,%,$(dir $^)))
-# environment
-VSCODE_LOG_STACK = false
+?D = $(patsubst %/,%,$(dir $?))
 # automatic
-%F = $(notdir $%)
-# environment
-VSCODE_CODE_CACHE_PATH = C:\Users\cbris\AppData\Roaming\Code\CachedData\30d9c6cd9483b2cc586687151bcbcd635f373630
-# environment
-LANG = C
-# default
-.LOADED := 
-# environment
-TMP = C:\Users\cbris\AppData\Local\Temp
-# default
-.INCLUDE_DIRS = .
-# environment
-PROCESSOR_ARCHITEW6432 = AMD64
-# makefile
-MAKEFLAGS = pqrR
-# environment
-ONEDRIVE = C:\Users\cbris\OneDrive
-# environment
-POWERSHELL_DISTRIBUTION_CHANNEL = MSI:Windows 10 Pro
-# makefile
-CURDIR := c:/Development/Projects/FitStackAPI
-# environment
-VSCODE_PIPE_LOGGING = true
-# environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
-# automatic
-*D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
-# environment
-PROGRAMFILES = C:\Program Files (x86)
-# environment
-MFLAGS = -pqrR
-# default
-.SHELLFLAGS := -c
-# environment
-COMMONPROGRAMW6432 = C:\Program Files\Common Files
-# automatic
-+D = $(patsubst %/,%,$(patsubst %\,%,$(dir $+)))
-# makefile (from 'Makefile', line 1)
-MAKEFILE_LIST := Makefile
+@D = $(patsubst %/,%,$(dir $@))
 # automatic
 @F = $(notdir $@)
-# environment
-VSCODE_VERBOSE_LOGGING = true
-# environment
-VSCODE_PID = 4440
-# automatic
-?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
-# automatic
-*F = $(notdir $*)
-# automatic
-<D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
+# makefile
+CURDIR := /Users/coltonbristow/Development/Projects/FitStackAPI
+# makefile
+SHELL = /bin/sh
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
-ONEDRIVECONSUMER = C:\Users\cbris\OneDrive
-# default
-MAKE_HOST := Windows32
-# environment
-PROGRAMDATA = C:\ProgramData
-# default
-SHELL := sh.exe
-# environment
-HOMEPATH = \Users\cbris
-# default
-MAKECMDGOALS := all
-# environment
-DRIVERDATA = C:\Windows\System32\Drivers\DriverData
-# environment
-COMSPEC = C:\WINDOWS\system32\cmd.exe
-# environment
-WINDIR = C:\WINDOWS
-# environment
-MAKELEVEL := 0
-# default
-MAKE = $(MAKE_COMMAND)
-# environment
-PATH = C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\cbris\AppData\Local\Microsoft\WindowsApps;C:\Users\cbris\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\cbris\go\bin;C:\Users\cbris\AppData\Local\GitHubDesktop\bin;C:\Development\SDKS\flutter\bin;C:\Users\cbris\.dotnet\tools;C:\Program Files\PowerShell\7\;C:\Users\cbris\AppData\Local\gitkraken\bin;C:\Program Files\Go\bin;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\cbris\AppData\Local\Microsoft\WindowsApps;C:\Users\cbris\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\cbris\go\bin;C:\Users\cbris\AppData\Local\GitHubDesktop\bin;C:\Development\SDKS\flutter\bin;C:\Users\cbris\.dotnet\tools;C:\Users\cbris\AppData\Local\gitkraken\bin;C:\Users\cbris\go\bin
-# environment
-COMPUTERNAME = DESKTOP-RSNSOSA
-# default
-MAKEFILES := 
-# automatic
-^F = $(notdir $^)
-# environment
-PROMPT = $P$G
-# environment
-CHOCOLATEYLASTPATHUPDATE = 132963295419324390
-# environment
-LOGONSERVER = \\DESKTOP-RSNSOSA
-# environment
-VSCODE_LOG_NATIVE = false
-# environment
-USERNAME = cbris
-# environment
-COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
-# automatic
-?F = $(notdir $?)
-# environment
-PROGRAMW6432 = C:\Program Files
-# environment
-PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
-# automatic
-+F = $(notdir $+)
-# environment
-ORIGINAL_XDG_CURRENT_DESKTOP = undefined
-# environment
-USERDOMAIN = DESKTOP-RSNSOSA
-# 'override' directive
-GNUMAKEFLAGS := 
-# environment
-OS = Windows_NT
-# makefile
-.DEFAULT_GOAL := start
-# default
-MAKE_VERSION := 4.3
-# environment
-PROGRAMFILES(X86) = C:\Program Files (x86)
-# environment
-USERDOMAIN_ROAMINGPROFILE = DESKTOP-RSNSOSA
-# environment
-NUMBER_OF_PROCESSORS = 16
-# environment
-PUBLIC = C:\Users\Public
-# environment
-APPDATA = C:\Users\cbris\AppData\Roaming
-# environment
-HOMEDRIVE = C:
-# environment
-PROCESSOR_ARCHITECTURE = x86
-# environment
-GOMODCACHE = C:\Users\cbris\go\pkg\mod
+_ = /usr/bin/make
+# makefile (from `Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
-COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+__CFBundleIdentifier = com.microsoft.VSCode
 # environment
-ELECTRON_RUN_AS_NODE = 1
+INFOPATH = /opt/homebrew/share/info:
 # environment
-TEMP = C:\Users\cbris\AppData\Local\Temp
-# environment
-VSCODE_IPC_HOOK = \\.\pipe\9dd6445e82172df096f19977690199c7-1.68.1-main-sock
+VSCODE_CWD = /
 # environment
 GOPROXY = https://proxy.golang.org,direct
+# environment
+PATH = /Users/coltonbristow/Development/SDKs/google-cloud-sdk/bin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/coltonbristow/Development/SDKs/flutter/bin:/Users/coltonbristow/.pub-cache/bin
+# environment
+GOPATH = /Users/coltonbristow/go
+# environment
+LaunchInstanceID = A22FA47F-3BEA-4974-9878-5160E260405A
+# environment
+ELECTRON_RUN_AS_NODE = 1
 # default
-.RECIPEPREFIX := 
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.WNArbqCkgI/Listeners
+# automatic
+%F = $(notdir $%)
+# environment
+PWD = /Users/coltonbristow/Development/Projects/FitStackAPI
+# environment
+HOMEBREW_CELLAR = /opt/homebrew/Cellar
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+MANPATH = /opt/homebrew/share/man:
+# environment
+GOMODCACHE = /Users/coltonbristow/go/pkg/mod
+# environment
+HOME = /Users/coltonbristow
+# default
+MAKEFILEPATH := /Applications/Xcode.app/Contents/Developer/Makefiles
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/coltonbristow/Library/Application Support/Code/CachedData/b06ae3b2d2dbfe28bca3134cc6be65935cdfea6a
+# environment
+LOGNAME = coltonbristow
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+SHLVL = 2
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = coltonbristow
+# makefile
+.DEFAULT_GOAL := start
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Applications/Xcode.app/Contents/Developer/usr/bin/make
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/xx/07hx2gwj53x2_w666v2q192h0000gn/T/
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /Users/coltonbristow/Library/Application Support/Code/1.69.1-main.sock
+# environment
+MallocNanoZone = 0
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.33912233.33912239
+# environment
+HOMEBREW_PREFIX = /opt/homebrew
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+HOMEBREW_REPOSITORY = /opt/homebrew
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
 # automatic
 <F = $(notdir $<)
+# environment
+LC_ALL = C
+# environment
+SECURITYSESSIONID = 186af
+# automatic
+^F = $(notdir $^)
 # default
 SUFFIXES := 
-# environment
-ALLUSERSPROFILE = C:\ProgramData
-# environment
-SESSIONNAME = Console
 # default
-.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync load
+.INCLUDE_DIRS = /usr/local/include
 # environment
-PROCESSOR_REVISION = 0802
+MAKELEVEL := 0
 # environment
-PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 8 Stepping 2, AuthenticAMD
+LANG = C
+# environment
+VSCODE_PID = 8827
 # variable set hash-table stats:
-# Load=99/1024=10%, Rehash=0, Collisions=9/126=7%
+# Load=68/1024=7%, Rehash=0, Collisions=2/92=2%
 
 # Pattern-specific Variable Values
 
@@ -219,9 +156,9 @@ PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 8 Stepping 2, AuthenticAMD
 
 # Directories
 
-# . (key c:/Development/Projects/FitStackAPI, mtime 1656470851): 22 files, no impossibilities.
+# . (device 16777231, inode 34941384): 21 files, no impossibilities.
 
-# 22 files, no impossibilities in 1 directories.
+# 21 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -229,26 +166,45 @@ PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 8 Stepping 2, AuthenticAMD
 
 # Files
 
-start:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 2):
-	docker-compose up -d
-
-# Not a target:
-Makefile:
-#  Implicit rule search has been done.
-#  Last modified 2022-06-28 19:52:45
-#  File has been updated.
-#  Successfully updated.
-
 stop:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 4):
+#  commands to execute (from `Makefile', line 4):
 	docker-compose down
+	
+
+# Not a target:
+all:
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-16 18:52:06
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+start:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 2):
+	docker-compose up -d
+	
 
 # Not a target:
 .DEFAULT:
@@ -256,27 +212,21 @@ stop:
 #  Modification time never checked.
 #  File has not been updated.
 
-# Not a target:
-all:
-#  Command line target.
-#  Implicit rule search has been done.
-#  File does not exist.
-#  File has not been updated.
-
 # files hash-table stats:
-# Load=6/1024=1%, Rehash=0, Collisions=0/16=0%
+# Load=6/1024=1%, Rehash=0, Collisions=0/18=0%
 # VPATH Search Paths
 
-# No 'vpath' search paths.
+# No `vpath' search paths.
 
-# No general ('VPATH' variable) search path.
+# No general (`VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 27 / storage = 245 B / avg = 9 B
-# current buf: size = 8174 B / used = 245 B / count = 27 / avg = 9 B
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# strcache performance: lookups = 33 / hit rate = 18%
-# hash-table stats:
-# Load=27/8192=0%, Rehash=0, Collisions=0/33=0%
-# Finished Make data base on Tue Jun 28 21:47:41 2022
+# Finished Make data base on Sat Jul 16 18:54:20 2022
 
  
+make: *** No rule to make target `all'.  Stop.
+
