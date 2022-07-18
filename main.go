@@ -19,10 +19,10 @@ type AppStatus struct {
 
 func run() error {
 	godotenv.Load(".env")
-	var cfg config.Config
-
-	cfg.Port = os.Getenv("PORT")
-	cfg.Env = os.Getenv("ENV")
+	cfg := config.Config{
+		Port: os.Getenv("PORT"),
+		Env:  os.Getenv("ENV"),
+	}
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
