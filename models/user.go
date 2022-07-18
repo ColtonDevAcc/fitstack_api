@@ -1,13 +1,10 @@
 package models
 
 type User struct {
-	ID        int    `json:"id"`
-	Uuid      string `json:"uuid"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	UpdatedAt string `json:"updated_at"`
-	CreatedAt string `json:"created_at"`
-	Token     string `json:"token"`
+	ID          int    `json:"id"`
+	Uuid        string `json:"uuid"`
+	DisplayName string `json:"display_name"`
+	Email       string `json:"email"`
+	UpdatedAt   string `json:"updated_at"`
+	CreatedAt   int64  `json:"created_at"`
 }

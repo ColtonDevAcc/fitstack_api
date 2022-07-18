@@ -5,13 +5,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/VooDooStack/FitStackAPI/api/handler"
 	"github.com/VooDooStack/FitStackAPI/config"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func NewRouter(db *gorm.DB) *gin.Engine {
-
 	client, err := config.SetupFirebase()
 	if err != nil {
 		log.Fatalln("failed to init firebase auth", err)
@@ -31,7 +31,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	r.SetTrustedProxies([]string{"192.168.1.2"})
 
-	setUpHandlers(r, v)
+	handler.SetUpHandlers(v)
 
 	return r
 }
