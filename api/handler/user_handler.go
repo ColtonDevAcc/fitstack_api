@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"time"
 
 	"firebase.google.com/go/auth"
 	"github.com/VooDooStack/FitStackAPI/models"
@@ -26,24 +25,37 @@ func userSignIn(c *gin.Context) {
 }
 
 func signUp(c *gin.Context) {
+	var user models.User
+
 	db := c.MustGet("db").(*gorm.DB)
 	firebaseAuth := c.MustGet("firebaseAuth").(*auth.Client)
-	user, err := firebaseAuth.GetUserByEmail(c, "cbristow99@gmail.com")
+	u, err := firebaseAuth.GetUserByEmail(c, "cbristow99@gmail.com")
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	newUser := models.User{
-		DisplayName: user.DisplayName,
-		Uuid:        user.UID,
-		Email:       user.Email,
-		UpdatedAt:   time.Now().GoString(),
-		CreatedAt:   user.UserMetadata.CreationTimestamp,
+	userCheck := db.Where(models.User{DisplayName: u.DisplayName}).Find(&user)
+	if userCheck != nil {
+		c.JSON(200, gin.H{
+			"error":  "user already exists",
+			"result": user,
+		})
+
+		return
+	} else {
+		err = db.Create(&models.User{
+			Uuid:        u.UID,
+			DisplayName: u.DisplayName,
+			Email:       u.Email,
+		}).Error
+		if err != nil {
+			c.JSON(200, gin.H{
+				"error": err.Error,
+			})
+		}
+
+		c.JSON(200, gin.H{
+			"user": u,
+		})
 	}
-
-	db.Create(&newUser)
-
-	c.JSON(200, gin.H{
-		"message": newUser,
-	})
 }
