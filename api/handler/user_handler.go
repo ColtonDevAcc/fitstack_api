@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"firebase.google.com/go/auth"
-	"github.com/VooDooStack/FitStackAPI/models"
+	"github.com/VooDooStack/FitStackAPI/data/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

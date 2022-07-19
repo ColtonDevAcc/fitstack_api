@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/VooDooStack/FitStackAPI/models"
+	"github.com/VooDooStack/FitStackAPI/data/models"
 	"gorm.io/gorm"
 )
 
