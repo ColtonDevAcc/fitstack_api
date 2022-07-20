@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"firebase.google.com/go/auth"
-	"github.com/VooDooStack/FitStackAPI/data/models"
+	"github.com/VooDooStack/FitStackAPI/data/usecases"
+	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -25,37 +26,26 @@ func userSignIn(c *gin.Context) {
 }
 
 func signUp(c *gin.Context) {
-	var user models.User
-
+	var user domain.User
 	db := c.MustGet("db").(*gorm.DB)
 	firebaseAuth := c.MustGet("firebaseAuth").(*auth.Client)
+
 	u, err := firebaseAuth.GetUserByEmail(c, "cbristow99@gmail.com")
 	if err != nil {
 		fmt.Print(err)
 	}
 
-	userCheck := db.Where(models.User{DisplayName: u.DisplayName}).Find(&user)
-	if userCheck != nil {
-		c.JSON(200, gin.H{
-			"error":  "user already exists",
-			"result": user,
+	user, err = usecases.GetUserByEmail(db, u.Email)
+	if err != nil {
+		fmt.Print(err)
+		c.JSON(500, gin.H{
+			"error": err,
 		})
 
 		return
-	} else {
-		err = db.Create(&models.User{
-			Uuid:        u.UID,
-			DisplayName: u.DisplayName,
-			Email:       u.Email,
-		}).Error
-		if err != nil {
-			c.JSON(200, gin.H{
-				"error": err.Error,
-			})
-		}
-
-		c.JSON(200, gin.H{
-			"user": u,
-		})
 	}
+
+	c.JSON(200, gin.H{
+		"user": user,
+	})
 }
