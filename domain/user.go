@@ -10,19 +10,17 @@ type User struct {
 }
 
 type UserUsecase interface {
-	Fetch()
-	GetByUuid()
-	Update()
-	GetByEmail()
-	Store()
-	Delete()
+	GetByUuid(uuid string) (User, error)
+	Update(uuid string) error
+	GetByEmail(email string) (User, error)
+	Store(user User) error
+	Delete(uuid string) error
 }
 
 type UserRepository interface {
-	Fetch()
-	GetByUuid()
-	Update()
-	GetByEmail()
-	Store()
-	Delete()
+	GetByUuid(uuid string) (User, error)
+	Update(uuid string) error
+	GetByEmail(email string) (User, error)
+	Store(user User) error
+	Delete(uuid string) error
 }
