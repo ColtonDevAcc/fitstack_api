@@ -22,10 +22,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	fmt.Println("Setting up router...")
 	r := gin.Default()
 
-	v := r.Group("/v1")
-	// authGroup := r.Group("/auth")
-
-	v.Use(func(c *gin.Context) {
+	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
 		c.Set("firebaseAuth", client)
 	})
@@ -33,21 +30,22 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	r.SetTrustedProxies([]string{"192.168.1.2"})
 
-	setUpHandlers(v, db)
+	setUpHandlers(r, db)
 
 	return r
 }
 
-func setUpHandlers(v *gin.RouterGroup, db *gorm.DB) {
-	v.GET("/ping", func(c *gin.Context) {
+func setUpHandlers(r *gin.Engine, db *gorm.DB) {
+	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	}) //.Use(middleware.AuthMiddleware)
 
 	//===========================User===========================//
+	userRG := r.Group("/user")
 	userRepo := _userRepo.NewUserRepository(*db)
 	userUsecase := _userUseCase.NewUserUseCase(userRepo)
-	_userHandler.NewUserHandler(v, userUsecase)
+	_userHandler.NewUserHandler(userRG, userUsecase)
 	//===========================User===========================//
 }
