@@ -46,7 +46,7 @@ func (u *userRepository) GetByUuid(uuid string) (domain.User, error) {
 		return domain.User{DisplayName: "Null User"}, tx.Error
 	}
 
-	return domain.User{}, nil
+	return user, nil
 }
 
 func (u *userRepository) Store(user domain.User) error {

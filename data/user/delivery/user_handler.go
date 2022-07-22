@@ -22,13 +22,13 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase) {
 	handler := &UserHandler{
 		UUsecase: us,
 	}
-	g.GET("/get/:id", handler.FetchUser)
-	g.POST("/signUp/:user", handler.SignUp)
-	g.DELETE("/delete/:id", handler.DeleteUser)
+	g.GET("/get/", handler.FetchUser)
+	g.POST("/signUp/", handler.SignUp)
+	g.DELETE("/delete/", handler.DeleteUser)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
-	user, err := ur.UUsecase.GetByUuid(c.Param("user"))
+	user, err := ur.UUsecase.GetByUuid(c.Param("uuid"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 	}
@@ -37,6 +37,7 @@ func (ur *UserHandler) FetchUser(c *gin.Context) {
 }
 
 func (ur *UserHandler) SignUp(c *gin.Context) {
+	//TODO: implement sign up
 	user, err := ur.UUsecase.GetByUuid(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
@@ -46,7 +47,7 @@ func (ur *UserHandler) SignUp(c *gin.Context) {
 }
 
 func (ur *UserHandler) DeleteUser(c *gin.Context) {
-	err := ur.UUsecase.Delete(c.Param("id"))
+	err := ur.UUsecase.Delete(c.Param("uuid"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 	}
