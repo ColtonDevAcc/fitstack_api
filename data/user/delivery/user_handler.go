@@ -5,6 +5,7 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 // ResponseError represent the reseponse error struct
@@ -22,9 +23,9 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase) {
 	handler := &UserHandler{
 		UUsecase: us,
 	}
-	g.GET("/get/", handler.FetchUser)
-	g.POST("/signUp/", handler.SignUp)
-	g.DELETE("/delete/", handler.DeleteUser)
+	g.GET("/get", handler.FetchUser)
+	g.POST("/signup", handler.SignUp)
+	g.DELETE("/delete", handler.DeleteUser)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -37,8 +38,16 @@ func (ur *UserHandler) FetchUser(c *gin.Context) {
 }
 
 func (ur *UserHandler) SignUp(c *gin.Context) {
-	//TODO: implement sign up
-	user, err := ur.UUsecase.GetByUuid(c.Param("id"))
+	requestedUser := domain.User{}
+	err := c.ShouldBindJSON(&requestedUser)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	user, err := ur.UUsecase.SignUp(requestedUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 	}

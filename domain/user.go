@@ -1,19 +1,20 @@
 package domain
 
 type User struct {
-	ID            int    `json:"id"`
-	Uuid          string `json:"uuid"`
-	DisplayName   string `json:"display_name"`
-	PhoneNumber   string `json:"phone_number"`
-	Email         string `json:"email"`
-	EmailVerified bool   `json:"email_verified"`
-	PhotoURL      string `json:"photo_url"`
-	UpdatedAt     string `json:"updated_at"`
-	CreatedAt     int64  `json:"created_at"`
-	RefreshToken  string `json:"refresh_token"`
+	Uuid          string       `gorm:"primaryKey" json:"uuid" binding:"required"`
+	DisplayName   string       `gorm:"unique;not null" json:"display_name" binding:"required"`
+	PhoneNumber   string       `gorm:"unique;not null" json:"phone_number" binding:"required"`
+	Email         string       `gorm:"unique;not null" json:"email" binding:"required,email"`
+	EmailVerified bool         `json:"email_verified"`
+	PhotoURL      string       `json:"photo_url" binding:"omitempty,url"`
+	Friendship    []Friendship `gorm:"many2many:user_friendships" json:"friendship"`
+	UpdatedAt     string       `json:"updated_at"`
+	CreatedAt     int64        `json:"created_at"`
+	RefreshToken  string       `json:"refresh_token"`
 }
 
 type UserUsecase interface {
+	SignUp(user User) (User, error)
 	GetByUuid(uuid string) (User, error)
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)
@@ -22,6 +23,7 @@ type UserUsecase interface {
 }
 
 type UserRepository interface {
+	SignUp(user User) (User, error)
 	GetByUuid(uuid string) (User, error)
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)

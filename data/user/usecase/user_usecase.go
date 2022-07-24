@@ -67,3 +67,14 @@ func (u *userUsecase) Update(uuid string) error {
 
 	return nil
 }
+
+func (u *userUsecase) SignUp(user domain.User) (domain.User, error) {
+	user, err := u.userRepo.SignUp(user)
+	if err != nil {
+		logrus.Error(err)
+
+		return domain.User{DisplayName: "Null User"}, err
+	}
+
+	return user, nil
+}

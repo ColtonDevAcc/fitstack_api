@@ -70,3 +70,14 @@ func (u *userRepository) Update(uuid string) error {
 
 	return nil
 }
+
+func (u *userRepository) SignUp(user domain.User) (domain.User, error) {
+	tx := u.Database.Create(&user)
+	if tx.Error != nil {
+		logrus.Error(tx.Error)
+
+		return domain.User{DisplayName: "Null User"}, tx.Error
+	}
+
+	return user, nil
+}

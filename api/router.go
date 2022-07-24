@@ -6,6 +6,9 @@ import (
 	"os"
 
 	"github.com/VooDooStack/FitStackAPI/config"
+	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
+	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
+	_friendshipUsecase "github.com/VooDooStack/FitStackAPI/data/friendship/usecase"
 	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
 	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
 	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
@@ -48,4 +51,11 @@ func setUpHandlers(r *gin.Engine, db *gorm.DB) {
 	userUsecase := _userUseCase.NewUserUseCase(userRepo)
 	_userHandler.NewUserHandler(userRG, userUsecase)
 	//===========================User===========================//
+
+	//===========================Friendship===========================//
+	friendshipRG := r.Group("/friendship")
+	friendshipRepo := _friendshipRepo.NewFriendshipRepository(*db)
+	friendshipUsecase := _friendshipUsecase.NewFriendshipUsecase(friendshipRepo)
+	_friendshipHandler.NewFriendshipHandler(friendshipRG, friendshipUsecase)
+	//===========================Friendship===========================//
 }
