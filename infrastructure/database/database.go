@@ -26,6 +26,11 @@ func NewDatabase(config config.Config) (*gorm.DB, error) {
 		return db, err
 	}
 
+	err = MigrateDB(db)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	return db, nil
 }
 

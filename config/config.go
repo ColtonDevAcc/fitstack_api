@@ -2,8 +2,6 @@ package config
 
 import (
 	"log"
-
-	"github.com/VooDooStack/FitStackAPI/models"
 )
 
 type Config struct {
@@ -14,5 +12,4 @@ type Config struct {
 type Application struct {
 	Config Config
 	Logger *log.Logger
-	Models models.Models
 }
