@@ -32,6 +32,8 @@ func (ur *UserHandler) FetchUser(c *gin.Context) {
 	user, err := ur.UUsecase.GetByUuid(c.Param("uuid"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+
+		return
 	}
 
 	c.JSON(http.StatusOK, user)
@@ -50,6 +52,8 @@ func (ur *UserHandler) SignUp(c *gin.Context) {
 	user, err := ur.UUsecase.SignUp(requestedUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+
+		return
 	}
 
 	c.JSON(http.StatusOK, user)

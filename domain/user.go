@@ -1,10 +1,13 @@
 package domain
 
 type User struct {
-	Uuid          string       `gorm:"primaryKey" json:"uuid" binding:"required"`
-	DisplayName   string       `gorm:"unique;not null" json:"display_name" binding:"required"`
-	PhoneNumber   string       `gorm:"unique;not null" json:"phone_number" binding:"required"`
+	UserId        string       `gorm:"primaryKey" json:"user_id" binding:"required"`
 	Email         string       `gorm:"unique;not null" json:"email" binding:"required,email"`
+	DisplayName   string       `gorm:"unique;not null" json:"display_name" binding:"required"`
+	FirstName     string       `json:"first_name" binding:"required"`
+	LastName      string       `json:"last_name" binding:"required"`
+	PhoneNumber   string       `gorm:"unique;not null" json:"phone_number" binding:"required"`
+	DateOfBirth   string       `json:"date_of_birth" binding:"required"`
 	EmailVerified bool         `json:"email_verified"`
 	PhotoURL      string       `json:"photo_url" binding:"omitempty,url"`
 	Friendship    []Friendship `gorm:"many2many:user_friendships" json:"friendship"`
