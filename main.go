@@ -24,6 +24,7 @@ func run() error {
 		Env:  os.Getenv("ENV"),
 	}
 
+
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	db, err := database.NewDatabase(cfg)
