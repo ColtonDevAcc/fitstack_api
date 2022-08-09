@@ -3,7 +3,6 @@ module github.com/VooDooStack/FitStackAPI
 go 1.18
 
 require (
-	firebase.google.com/go v3.13.0+incompatible
 	github.com/gin-gonic/gin v1.8.1
 	google.golang.org/api v0.87.0
 	google.golang.org/genproto v0.0.0-20220715211116-798f69b842b9
@@ -49,6 +48,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/appengine/v2 v2.0.1 // indirect
 	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -56,6 +56,7 @@ require (
 
 require (
 	cloud.google.com/go/secretmanager v1.5.0
+	firebase.google.com/go/v4 v4.8.0
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0

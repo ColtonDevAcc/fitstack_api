@@ -26,6 +26,7 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase) {
 	g.GET("/get", handler.FetchUser)
 	g.POST("/signup", handler.SignUp)
 	g.DELETE("/delete", handler.DeleteUser)
+	g.GET("/signin", handler.SignInWithToken)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -49,7 +50,7 @@ func (ur *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, err := ur.UUsecase.SignUp(requestedUser)
+	user, err := ur.UUsecase.SignUp(requestedUser, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 
@@ -66,4 +67,28 @@ func (ur *UserHandler) DeleteUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, nil)
+}
+
+func (ur *UserHandler) SignInWithToken(c *gin.Context) {
+	var token struct {
+		Token string `json:"token"`
+	}
+
+	err := c.BindJSON(&token)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	user, err := ur.UUsecase.SignInWithToken(c, token.Token)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

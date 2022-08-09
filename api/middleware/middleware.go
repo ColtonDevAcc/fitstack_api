@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"firebase.google.com/go/auth"
+	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/infrastructure/secrets"
 	"github.com/gin-gonic/gin"
 )

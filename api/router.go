@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/config"
 	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
 	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
@@ -33,12 +34,12 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	r.SetTrustedProxies([]string{"192.168.1.2"})
 
-	setUpHandlers(r, db)
+	setUpHandlers(r, db, *client)
 
 	return r
 }
 
-func setUpHandlers(r *gin.Engine, db *gorm.DB) {
+func setUpHandlers(r *gin.Engine, db *gorm.DB, fa auth.Client) {
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -48,7 +49,7 @@ func setUpHandlers(r *gin.Engine, db *gorm.DB) {
 	//===========================User===========================//
 	userRG := r.Group("/user")
 	userRepo := _userRepo.NewUserRepository(*db)
-	userUsecase := _userUseCase.NewUserUseCase(userRepo)
+	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa)
 	_userHandler.NewUserHandler(userRG, userUsecase)
 	//===========================User===========================//
 

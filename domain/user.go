@@ -1,8 +1,11 @@
 package domain
 
+import "context"
+
 type User struct {
 	UserId        string       `gorm:"primaryKey" json:"user_id" binding:"required"`
 	Email         string       `gorm:"unique;not null" json:"email" binding:"required,email"`
+	Password      string       `gorm:"-" json:"password"`
 	DisplayName   string       `gorm:"unique;not null" json:"display_name" binding:"required"`
 	FirstName     string       `json:"first_name" binding:"required"`
 	LastName      string       `json:"last_name" binding:"required"`
@@ -17,7 +20,8 @@ type User struct {
 }
 
 type UserUsecase interface {
-	SignUp(user User) (User, error)
+	SignUp(user User, ctx context.Context) (User, error)
+	SignInWithToken(ctx context.Context, token string) (User, error)
 	GetByUuid(uuid string) (User, error)
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)
@@ -27,6 +31,7 @@ type UserUsecase interface {
 
 type UserRepository interface {
 	SignUp(user User) (User, error)
+	SignInWithToken(uuid string) (User, error)
 	GetByUuid(uuid string) (User, error)
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)

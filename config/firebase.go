@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	firebase "firebase.google.com/go"
-	"firebase.google.com/go/auth"
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
 )
 

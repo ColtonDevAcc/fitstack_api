@@ -81,3 +81,14 @@ func (u *userRepository) SignUp(user domain.User) (domain.User, error) {
 
 	return user, nil
 }
+
+func (u *userRepository) SignInWithToken(uuid string) (domain.User, error) {
+	user, err := u.GetByUuid(uuid)
+	if err != nil {
+		logrus.Error(err)
+
+		return domain.User{}, err
+	}
+	// u.Database.Where(user).Save()
+	return user, nil
+}

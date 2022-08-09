@@ -7,7 +7,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Sun Jul 31 13:39:48 2022
+# Make data base, printed on Mon Aug  8 19:51:08 2022
 
 # Variables
 
@@ -46,13 +46,13 @@ PATH = /Library/Frameworks/Python.framework/Versions/3.10/bin:/opt/homebrew/bin:
 # environment
 GOPATH = /Users/colton.bristow/go
 # environment
-LaunchInstanceID = 3C740AB9-7229-4077-BD45-B957990E1842
+LaunchInstanceID = EF052158-193F-4D04-AF96-50A0D299D2D4
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.FKeGeUCFwY/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.sssZXu4Oif/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -70,11 +70,11 @@ HOME = /Users/colton.bristow
 # default
 MAKEFILEPATH := /Applications/Xcode.app/Contents/Developer/Makefiles
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/colton.bristow/Library/Application Support/Code/CachedData/3b889b090b5ad5793f524b5d1d39fda662b96a2a
+VSCODE_CODE_CACHE_PATH = /Users/colton.bristow/Library/Application Support/Code/CachedData/da76f93349a72022ca4670c1b84860304616aaa2
 # environment
 LOGNAME = colton.bristow
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -104,7 +104,7 @@ TMPDIR = /var/folders/fd/m393ky6x62s687tc5yg85x3ssphd4f/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/colton.bristow/Library/Application Support/Code/1.69.2-main.sock
+VSCODE_IPC_HOOK = /Users/colton.bristow/Library/Application Support/Code/1.70.0-main.sock
 # environment
 MallocNanoZone = 0
 # makefile
@@ -114,7 +114,7 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.93181324.93181330
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.100435686.100435692
 # environment
 HOMEBREW_PREFIX = /opt/homebrew
 # automatic
@@ -134,7 +134,7 @@ MAKEFILES :=
 # environment
 LC_ALL = C
 # environment
-SECURITYSESSIONID = 186ae
+SECURITYSESSIONID = 186a7
 # automatic
 ^F = $(notdir $^)
 # default
@@ -146,7 +146,7 @@ MAKELEVEL := 0
 # environment
 LANG = C
 # environment
-VSCODE_PID = 3352
+VSCODE_PID = 2260
 # variable set hash-table stats:
 # Load=68/1024=7%, Rehash=0, Collisions=2/92=2%
 
@@ -225,7 +225,7 @@ start:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jul 31 13:39:48 2022
+# Finished Make data base on Mon Aug  8 19:51:08 2022
 
  
 make: *** No rule to make target `all'.  Stop.

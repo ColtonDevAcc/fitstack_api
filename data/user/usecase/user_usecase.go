@@ -1,16 +1,21 @@
 package usecase
 
 import (
+	"context"
+
+	"firebase.google.com/go/v4/auth"
+
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/sirupsen/logrus"
 )
 
 type userUsecase struct {
 	userRepo domain.UserRepository
+	client   auth.Client
 }
 
-func NewUserUseCase(ur domain.UserRepository) domain.UserUsecase {
-	return &userUsecase{userRepo: ur}
+func NewUserUseCase(ur domain.UserRepository, client auth.Client) domain.UserUsecase {
+	return &userUsecase{userRepo: ur, client: client}
 }
 
 func (u *userUsecase) Delete(uuid string) error {
@@ -68,12 +73,37 @@ func (u *userUsecase) Update(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) SignUp(user domain.User) (domain.User, error) {
-	user, err := u.userRepo.SignUp(user)
+func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User, error) {
+	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhotoURL(user.PhotoURL).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
+	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
 		logrus.Error(err)
+		return domain.User{}, err
+	}
 
+	user.UserId = fbu.UID
+
+	user, err = u.userRepo.SignUp(user)
+	if err != nil {
+		logrus.Error(err)
 		return domain.User{DisplayName: "Null User"}, err
+	}
+
+	return user, nil
+}
+
+func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (domain.User, error) {
+	//TODO:
+	at, err := u.client.VerifyIDToken(ctx, token)
+	if err != nil {
+		logrus.Error(err)
+		return domain.User{}, err
+	}
+
+	user, err := u.userRepo.SignInWithToken(at.UID)
+	if err != nil {
+		logrus.Error(err)
+		return domain.User{}, err
 	}
 
 	return user, nil
