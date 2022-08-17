@@ -74,7 +74,7 @@ func (ur *UserHandler) SignInWithToken(c *gin.Context) {
 		Token string `json:"token"`
 	}
 
-	err := c.BindJSON(&token)
+	err := c.ShouldBindJSON(&token)
 	if err != nil {
 		logrus.Error(err)
 
