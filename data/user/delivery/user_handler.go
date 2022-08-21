@@ -26,7 +26,7 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase) {
 	g.GET("/get", handler.FetchUser)
 	g.POST("/signup", handler.SignUp)
 	g.DELETE("/delete", handler.DeleteUser)
-	g.GET("/signin", handler.SignInWithToken)
+	g.POST("/signin", handler.SignInWithToken)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
