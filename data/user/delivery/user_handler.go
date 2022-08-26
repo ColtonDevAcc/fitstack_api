@@ -78,7 +78,7 @@ func (ur *UserHandler) SignInWithToken(c *gin.Context) {
 	if err != nil {
 		logrus.Error(err)
 
-		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: "error" + err.Error()})
 		return
 	}
 
@@ -86,7 +86,7 @@ func (ur *UserHandler) SignInWithToken(c *gin.Context) {
 	if err != nil {
 		logrus.Error(err)
 
-		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: "error" + err.Error()})
 		return
 	}
 
