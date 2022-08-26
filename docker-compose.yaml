@@ -17,7 +17,7 @@ services:
     
   api:
     build: .
-    container_name: "fitstack-rest-api"
+    container_name: "fitstack-rest-api-dev"
     environment:
       DB_USERNAME: "postgres"
       DB_PASSWORD: "postgres"
