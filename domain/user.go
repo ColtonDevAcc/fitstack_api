@@ -3,7 +3,7 @@ package domain
 import "context"
 
 type User struct {
-	UserId        string       `gorm:"primaryKey" json:"user_id" binding:"required"`
+	UserId        string       `gorm:"primaryKey" json:"user_id"`
 	Email         string       `gorm:"unique;not null" json:"email" binding:"required,email"`
 	Password      string       `gorm:"-" json:"password"`
 	DisplayName   string       `gorm:"unique;not null" json:"display_name" binding:"required"`
