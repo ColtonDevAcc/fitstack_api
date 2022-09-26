@@ -12,7 +12,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'SERVICE-NAME'
+      - 'fitstack-api-dev'
       - '--image'
       - 'gcr.io/$PROJECT_ID/fitstack-api-dev:$COMMIT_SHA'
       - '--region'
