@@ -74,7 +74,7 @@ func (u *userUsecase) Update(uuid string) error {
 }
 
 func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User, error) {
-	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhotoURL(user.PhotoURL).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
+	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
 	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
