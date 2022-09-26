@@ -75,6 +75,7 @@ func (u *userUsecase) Update(uuid string) error {
 
 func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhotoURL(user.PhotoURL).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
+
 	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
 		logrus.Error(err)
@@ -107,4 +108,13 @@ func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (domain
 	}
 
 	return user, nil
+}
+
+func (u *userUsecase) RefreshToken(ctx context.Context, refresh_token string) (string, error) {
+	str, err := u.userRepo.RefreshToken(refresh_token)
+	if err != nil {
+		logrus.Error(err)
+		return "", err
+	}
+	return str, err
 }

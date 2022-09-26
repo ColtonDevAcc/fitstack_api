@@ -22,6 +22,7 @@ type User struct {
 type UserUsecase interface {
 	SignUp(user User, ctx context.Context) (User, error)
 	SignInWithToken(ctx context.Context, token string) (User, error)
+	RefreshToken(ctx context.Context, refresh_token string) (string, error)
 	GetByUuid(uuid string) (User, error)
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)
@@ -32,6 +33,7 @@ type UserUsecase interface {
 type UserRepository interface {
 	SignUp(user User) (User, error)
 	SignInWithToken(uuid string) (User, error)
+	RefreshToken(refresh_token string) (string, error)
 	GetByUuid(uuid string) (User, error)
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)

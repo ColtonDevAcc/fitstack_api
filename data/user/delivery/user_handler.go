@@ -24,6 +24,7 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase) {
 		UUsecase: us,
 	}
 	g.GET("/get", handler.FetchUser)
+	g.POST("/refresh-token", handler.RefreshToken)
 	g.POST("/signup", handler.SignUp)
 	g.DELETE("/delete", handler.DeleteUser)
 	g.POST("/signin", handler.SignInWithToken)
@@ -91,4 +92,28 @@ func (ur *UserHandler) SignInWithToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+func (ur *UserHandler) RefreshToken(c *gin.Context) {
+	var refreshToken struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+
+	err := c.ShouldBindJSON(&refreshToken)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: "error" + err.Error()})
+		return
+	}
+
+	token, err := ur.UUsecase.RefreshToken(c, refreshToken.RefreshToken)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: "error" + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, token)
 }

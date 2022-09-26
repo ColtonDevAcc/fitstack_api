@@ -1,6 +1,13 @@
 package repository
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"strings"
+
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -91,4 +98,30 @@ func (u *userRepository) SignInWithToken(uuid string) (domain.User, error) {
 	}
 	// u.Database.Where(user).Save()
 	return user, nil
+}
+
+func (u *userRepository) RefreshToken(refresh_token string) (string, error) {
+	fmt.Println("exchanging token " + refresh_token + "/n")
+
+	jsonBody := []byte(fmt.Sprintf(refresh_token, "grant_type=refresh_token&refresh_token=%d"))
+	bodyReader := bytes.NewReader(jsonBody)
+
+	requestURL := "https://securetoken.googleapis.com/v1/token?key=AIzaSyD00CGxTDoVgQEKBKLh2xIfudyaIHifS5Y"
+	req, err := http.NewRequest(http.MethodPost, requestURL, bodyReader)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	//We Read the response body on the line below.
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	//Convert the body to type string
+	sb := strings.Split(string(body), "%")[0]
+
+	fmt.Println("new token response " + sb)
+
+	return sb, nil
 }
