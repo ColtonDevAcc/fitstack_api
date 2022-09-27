@@ -83,6 +83,7 @@ func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User
 	}
 
 	user.UserId = fbu.UID
+	user.CreatedAt = fbu.UserMetadata.CreationTimestamp
 
 	user, err = u.userRepo.SignUp(user)
 	if err != nil {
