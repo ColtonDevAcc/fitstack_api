@@ -2,10 +2,12 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"firebase.google.com/go/v4/auth"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
+	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	"github.com/sirupsen/logrus"
 )
 
@@ -76,6 +78,17 @@ func (u *userUsecase) Update(uuid string) error {
 func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
+	userCheck, err := u.userRepo.CheckUniqueFields(user)
+	if err != nil {
+		logrus.Error(err)
+		return domain.User{}, err
+	}
+
+	if userCheck != (domain.User{}) {
+		logrus.Error("user already exists")
+		return domain.User{}, fmt.Errorf("user already exists")
+	}
+
 	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
 		logrus.Error(err)
@@ -95,7 +108,6 @@ func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User
 }
 
 func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (domain.User, error) {
-	//TODO:
 	at, err := u.client.VerifyIDToken(ctx, token)
 	if err != nil {
 		logrus.Error(err)
@@ -118,4 +130,14 @@ func (u *userUsecase) RefreshToken(ctx context.Context, refresh_token string) (s
 		return "", err
 	}
 	return str, err
+}
+
+func (u *userUsecase) SignInWithEmailAndPassword(ctx context.Context, login *dto.LoginInEmailAndPassword) (string, error) {
+	response, err := u.userRepo.SignInWithEmailAndPassword(login)
+	if err != nil {
+		logrus.Error(err)
+		return err.Error(), err
+	}
+
+	return response, nil
 }

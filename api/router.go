@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"firebase.google.com/go/v4/auth"
+	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/config"
 	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
 	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
@@ -50,13 +51,14 @@ func setUpHandlers(r *gin.Engine, db *gorm.DB, fa auth.Client) {
 	userRG := r.Group("/user")
 	userRepo := _userRepo.NewUserRepository(*db)
 	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa)
-	_userHandler.NewUserHandler(userRG, userUsecase)
+	_userHandler.NewUserHandler(userRG, userUsecase, &fa)
 	//===========================User===========================//
 
 	//===========================Friendship===========================//
 	friendshipRG := r.Group("/friendship")
+	friendshipRG.Use(middleware.AuthJWT(&fa))
 	friendshipRepo := _friendshipRepo.NewFriendshipRepository(*db)
-	friendshipUsecase := _friendshipUsecase.NewFriendshipUsecase(friendshipRepo)
+	friendshipUsecase := _friendshipUsecase.NewFriendshipUsecase(friendshipRepo, &fa)
 	_friendshipHandler.NewFriendshipHandler(friendshipRG, friendshipUsecase)
 	//===========================Friendship===========================//
 }

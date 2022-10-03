@@ -1,7 +1,10 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/VooDooStack/FitStackAPI/domain"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -14,14 +17,53 @@ func NewFriendshipRepository(db gorm.DB) domain.FriendshipRepository {
 }
 
 func (f *friendshipRepository) AddFriend(friendship domain.Friendship) (domain.Friendship, error) {
-	tx := f.Database.Create(&friendship)
+	var toFriend domain.User
+	tx := f.Database.Where(domain.User{UserId: friendship.ToUserId}).First(&toFriend)
 	if tx.Error != nil {
+		logrus.Error(tx.Error)
+
+		return domain.Friendship{}, fmt.Errorf("this user does not exist: %s", friendship.ToUserId)
+	}
+
+	var friend domain.Friendship
+	tx = f.Database.Where(domain.Friendship{ToUserId: friend.ToUserId}).First(&friend)
+	if tx.Error != nil {
+		logrus.Error(tx.Error)
+
 		return domain.Friendship{}, tx.Error
 	}
 
-	return friendship, nil
+	if friend == (domain.Friendship{}) {
+		tx := f.Database.Create(&friendship)
+		if tx.Error != nil {
+			return domain.Friendship{}, tx.Error
+		}
+
+		return friendship, nil
+	}
+
+	return domain.Friendship{}, fmt.Errorf("an invitation to %q already exists", friendship.ToUserId)
 }
 
 func (f *friendshipRepository) RemoveFriend(friendship domain.Friendship) error {
+	tx := f.Database.Where(friendship).First(&friendship).Delete(&friendship)
+	if tx.Error != nil {
+		logrus.Error(tx.Error)
+
+		return tx.Error
+	}
+
 	return nil
+
+}
+
+func (f *friendshipRepository) GetFriends(uuid string) ([]domain.Friendship, error) {
+	var friendshipList []domain.Friendship
+	tx := f.Database.Model(domain.Friendship{}).Where(domain.Friendship{ToUserId: uuid}).Or(domain.Friendship{FromUserId: uuid}).Find(&friendshipList)
+	if tx.Error != nil {
+		logrus.Error(tx.Error)
+		return []domain.Friendship{}, tx.Error
+	}
+	fmt.Printf("============================================\nfriendships: %v \n============================================\n", friendshipList)
+	return friendshipList, nil
 }

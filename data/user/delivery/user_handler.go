@@ -2,8 +2,12 @@ package delivery
 
 import (
 	"net/http"
+	"strings"
 
+	"firebase.google.com/go/v4/auth"
+	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/domain"
+	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -19,15 +23,16 @@ type UserHandler struct {
 }
 
 // NewArticleHandler will initialize the articles/ resources endpoint
-func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase) {
+func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase, client *auth.Client) {
 	handler := &UserHandler{
 		UUsecase: us,
 	}
-	g.GET("/get", handler.FetchUser)
+	g.GET("/get", middleware.AuthJWT(client), handler.FetchUser)
 	g.POST("/refresh-token", handler.RefreshToken)
 	g.POST("/signup", handler.SignUp)
-	g.DELETE("/delete", handler.DeleteUser)
-	g.POST("/signin", handler.SignInWithToken)
+	g.DELETE("/delete", middleware.AuthJWT(client), handler.DeleteUser)
+	g.POST("/signin", middleware.AuthJWT(client), handler.SignInWithToken)
+	g.POST("/signin-email-password", handler.SignInWithEmailAndPassword)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -71,11 +76,21 @@ func (ur *UserHandler) DeleteUser(c *gin.Context) {
 }
 
 func (ur *UserHandler) SignInWithToken(c *gin.Context) {
-	var token struct {
-		Token string `json:"token"`
+	auth := c.Request.Header.Get("Authorization")
+	if auth == "" {
+		c.String(http.StatusForbidden, "No Authorization header provided")
+		c.Abort()
+		return
 	}
 
-	err := c.ShouldBindJSON(&token)
+	token := strings.TrimPrefix(auth, "Bearer ")
+	if token == auth {
+		c.String(http.StatusForbidden, "Could not find bearer token in Authorization header")
+		c.Abort()
+		return
+	}
+
+	user, err := ur.UUsecase.SignInWithToken(c, token)
 	if err != nil {
 		logrus.Error(err)
 
@@ -83,7 +98,20 @@ func (ur *UserHandler) SignInWithToken(c *gin.Context) {
 		return
 	}
 
-	user, err := ur.UUsecase.SignInWithToken(c, token.Token)
+	c.JSON(http.StatusOK, user)
+}
+
+func (ur *UserHandler) SignInWithEmailAndPassword(c *gin.Context) {
+	loginInEmailAndPassword := &dto.LoginInEmailAndPassword{}
+	err := c.ShouldBindJSON(loginInEmailAndPassword)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: "error" + err.Error()})
+		return
+	}
+
+	user, err := ur.UUsecase.SignInWithEmailAndPassword(c, loginInEmailAndPassword)
 	if err != nil {
 		logrus.Error(err)
 
