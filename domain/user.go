@@ -2,26 +2,28 @@ package domain
 
 import (
 	"context"
+	"time"
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	UserId        string `gorm:"primaryKey" json:"user_id"`
-	Email         string `gorm:"unique;not null" json:"email" binding:"required,email"`
-	Password      string `gorm:"-" json:"password"`
-	DisplayName   string `gorm:"unique;not null" json:"display_name" binding:"required"`
-	FirstName     string `json:"first_name" binding:"required"`
-	LastName      string `json:"last_name" binding:"required"`
-	PhoneNumber   string `gorm:"unique;not null" json:"phone_number" binding:"required"`
-	DateOfBirth   string `json:"date_of_birth" binding:"required"`
-	EmailVerified bool   `json:"email_verified"`
-	PhotoURL      string `json:"photo_url" binding:"omitempty,url"`
-	UpdatedAt     string `json:"updated_at"`
-	CreatedAt     int64  `json:"created_at"`
-	RefreshToken  string `json:"refresh_token"`
+	ID            string         `gorm:"primaryKey" json:"user_id"`
+	Email         string         `gorm:"unique;not null" json:"email" binding:"required,email"`
+	Password      string         `gorm:"-:all" json:"password"`
+	DisplayName   string         `gorm:"unique;not null" json:"display_name" binding:"required"`
+	FirstName     string         `gorm:"not null" json:"first_name" binding:"required"`
+	LastName      string         `gorm:"not null" json:"last_name" binding:"required"`
+	PhoneNumber   string         `gorm:"unique;not null" json:"phone_number" binding:"required"`
+	DateOfBirth   string         `gorm:"not null" json:"date_of_birth" binding:"required"`
+	EmailVerified bool           `json:"email_verified"`
+	PhoneVerified bool           `json:"phone_verified"`
+	PhotoURL      string         `json:"photo_url" binding:"omitempty,url"`
+	UpdatedAt     time.Time      `json:"updated_at"`
+	CreatedAt     time.Time      `gorm:"autoCreateTime" json:"created_at"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
+	RefreshToken  string         `json:"refresh_token"`
 }
 
 type UserUsecase interface {
@@ -42,7 +44,7 @@ type UserRepository interface {
 	SignInWithEmailAndPassword(login *dto.LoginInEmailAndPassword) (string, error)
 	RefreshToken(refresh_token string) (string, error)
 	GetByUuid(uuid string) (User, error)
-	CheckUniqueFields(user User) (User, error)
+	CheckUniqueFields(user User) error
 	Update(uuid string) error
 	GetByEmail(email string) (User, error)
 	Store(user User) error

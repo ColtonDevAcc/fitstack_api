@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	"firebase.google.com/go/v4/auth"
 
@@ -78,15 +78,10 @@ func (u *userUsecase) Update(uuid string) error {
 func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
-	userCheck, err := u.userRepo.CheckUniqueFields(user)
+	err := u.userRepo.CheckUniqueFields(user)
 	if err != nil {
 		logrus.Error(err)
 		return domain.User{}, err
-	}
-
-	if userCheck != (domain.User{}) {
-		logrus.Error("user already exists")
-		return domain.User{}, fmt.Errorf("user already exists")
 	}
 
 	fbu, err := u.client.CreateUser(ctx, params)
@@ -95,8 +90,8 @@ func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User
 		return domain.User{}, err
 	}
 
-	user.UserId = fbu.UID
-	user.CreatedAt = fbu.UserMetadata.CreationTimestamp
+	user.ID = fbu.UID
+	user.CreatedAt = time.Now()
 
 	user, err = u.userRepo.SignUp(user)
 	if err != nil {

@@ -24,7 +24,7 @@ func NewUserRepository(db gorm.DB) domain.UserRepository {
 }
 
 func (u *userRepository) Delete(uuid string) error {
-	tx := u.Database.Where(domain.User{UserId: uuid}).Delete(&domain.User{})
+	tx := u.Database.Where(domain.User{ID: uuid}).Delete(&domain.User{})
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
@@ -48,7 +48,7 @@ func (u *userRepository) GetByEmail(email string) (domain.User, error) {
 
 func (u *userRepository) GetByUuid(uuid string) (domain.User, error) {
 	var user domain.User
-	tx := u.Database.Where(domain.User{UserId: uuid}).Find(&user)
+	tx := u.Database.Where(domain.User{ID: uuid}).Find(&user)
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
@@ -70,7 +70,7 @@ func (u *userRepository) Store(user domain.User) error {
 }
 
 func (u *userRepository) Update(uuid string) error {
-	tx := u.Database.Where(domain.User{UserId: uuid}).Save(&domain.User{})
+	tx := u.Database.Where(domain.User{ID: uuid}).Save(&domain.User{})
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
@@ -150,13 +150,13 @@ func (u *userRepository) SignInWithEmailAndPassword(login *dto.LoginInEmailAndPa
 	return string(body), nil
 }
 
-func (u *userRepository) CheckUniqueFields(user domain.User) (domain.User, error) {
+func (u *userRepository) CheckUniqueFields(user domain.User) error {
 	var userEmailCheck domain.User
 	tx := u.Database.Where(domain.User{Email: user.Email}).Take(&userEmailCheck)
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
-		return domain.User{}, tx.Error
+		return tx.Error
 	}
 
 	var userDisplayNameCheck domain.User
@@ -164,7 +164,7 @@ func (u *userRepository) CheckUniqueFields(user domain.User) (domain.User, error
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
-		return domain.User{}, tx.Error
+		return tx.Error
 	}
 
 	var userPhoneNumberCheck domain.User
@@ -172,12 +172,12 @@ func (u *userRepository) CheckUniqueFields(user domain.User) (domain.User, error
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
-		return domain.User{}, tx.Error
+		return tx.Error
+	}
+	emptyUser := domain.User{}
+	if userDisplayNameCheck.DisplayName != emptyUser.DisplayName && userPhoneNumberCheck.PhoneNumber != emptyUser.PhoneNumber && userEmailCheck.Email != emptyUser.Email {
+		return fmt.Errorf("user already exits")
 	}
 
-	if userDisplayNameCheck != (domain.User{}) && userPhoneNumberCheck != (domain.User{}) && userEmailCheck != (domain.User{}) {
-		return domain.User{DisplayName: "exits"}, fmt.Errorf("user already exits")
-	}
-
-	return domain.User{}, nil
+	return nil
 }

@@ -18,7 +18,7 @@ func NewFriendshipRepository(db gorm.DB) domain.FriendshipRepository {
 
 func (f *friendshipRepository) AddFriend(friendship domain.Friendship) (domain.Friendship, error) {
 	var toFriend domain.User
-	tx := f.Database.Where(domain.User{UserId: friendship.ToUserId}).First(&toFriend)
+	tx := f.Database.Where(domain.User{ID: friendship.ToUserId}).First(&toFriend)
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
