@@ -18,7 +18,7 @@ func NewFriendshipRepository(db gorm.DB) domain.FriendshipRepository {
 
 func (f *friendshipRepository) AddFriend(friendship domain.Friendship) (domain.Friendship, error) {
 	var toFriend domain.User
-	tx := f.Database.Where(domain.User{ID: friendship.ToUserId}).First(&toFriend)
+	tx := f.Database.Where(domain.User{UUID: friendship.ToUserId}).First(&toFriend)
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
@@ -33,14 +33,14 @@ func (f *friendshipRepository) AddFriend(friendship domain.Friendship) (domain.F
 		return domain.Friendship{}, tx.Error
 	}
 
-	if friend == (domain.Friendship{}) {
-		tx := f.Database.Create(&friendship)
-		if tx.Error != nil {
-			return domain.Friendship{}, tx.Error
-		}
+	// if friend == (domain.Friendship{}) {
+	// 	tx := f.Database.Create(&friendship)
+	// 	if tx.Error != nil {
+	// 		return domain.Friendship{}, tx.Error
+	// 	}
 
-		return friendship, nil
-	}
+	// 	return friendship, nil
+	// }
 
 	return domain.Friendship{}, fmt.Errorf("an invitation to %q already exists", friendship.ToUserId)
 }

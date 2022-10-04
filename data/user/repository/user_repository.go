@@ -24,7 +24,7 @@ func NewUserRepository(db gorm.DB) domain.UserRepository {
 }
 
 func (u *userRepository) Delete(uuid string) error {
-	tx := u.Database.Where(domain.User{ID: uuid}).Delete(&domain.User{})
+	tx := u.Database.Where(domain.User{UUID: uuid}).Delete(&domain.User{})
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
@@ -48,7 +48,7 @@ func (u *userRepository) GetByEmail(email string) (domain.User, error) {
 
 func (u *userRepository) GetByUuid(uuid string) (domain.User, error) {
 	var user domain.User
-	tx := u.Database.Where(domain.User{ID: uuid}).Find(&user)
+	tx := u.Database.Where(domain.User{UUID: uuid}).Find(&user)
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 
@@ -70,7 +70,7 @@ func (u *userRepository) Store(user domain.User) error {
 }
 
 func (u *userRepository) Update(uuid string) error {
-	tx := u.Database.Where(domain.User{ID: uuid}).Save(&domain.User{})
+	tx := u.Database.Where(domain.User{UUID: uuid}).Save(&domain.User{})
 	if tx.Error != nil {
 		logrus.Error(tx.Error)
 

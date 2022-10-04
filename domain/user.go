@@ -9,7 +9,8 @@ import (
 )
 
 type User struct {
-	ID            string         `gorm:"primaryKey" json:"user_id"`
+	ID            int64
+	UUID          string         `gorm:"primaryKey;unique" json:"user_id"`
 	Email         string         `gorm:"unique;not null" json:"email" binding:"required,email"`
 	Password      string         `gorm:"-:all" json:"password"`
 	DisplayName   string         `gorm:"unique;not null" json:"display_name" binding:"required"`
@@ -22,7 +23,7 @@ type User struct {
 	PhotoURL      string         `json:"photo_url" binding:"omitempty,url"`
 	UpdatedAt     time.Time      `json:"updated_at"`
 	CreatedAt     time.Time      `gorm:"autoCreateTime" json:"created_at"`
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 	RefreshToken  string         `json:"refresh_token"`
 }
 

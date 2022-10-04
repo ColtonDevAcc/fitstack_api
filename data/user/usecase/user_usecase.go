@@ -90,7 +90,7 @@ func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User
 		return domain.User{}, err
 	}
 
-	user.ID = fbu.UID
+	user.UUID = fbu.UID
 	user.CreatedAt = time.Now()
 
 	user, err = u.userRepo.SignUp(user)
