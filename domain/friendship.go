@@ -3,17 +3,19 @@ package domain
 import (
 	"context"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // this is a friendship table struct
 type Friendship struct {
-	ID           int64
-	FromUserId   string    `gorm:"primaryKey" json:"from_user"`
-	ToUserId     string    `gorm:"primaryKey" json:"to_user" binding:"required"`
+	gorm.Model
+	FromUserId   string    `gorm:"ForeignKey" json:"from_user"`
+	ToUserId     string    `gorm:"ForeignKey" json:"to_user" binding:"required"`
 	SentTime     time.Time `json:"sent_time"`
 	ResponseTime time.Time `json:"response_time"`
-	Accepted     bool      `json:"accepted" `
-	User         []*User   `gorm:"many2many:friends;foreignKey:FromUserId;references:UUID;foreignKey:ToUserId;references:UUID"`
+	Accepted     bool      `json:"accepted"`
+	User         []*User   `gorm:"many2many:friends;"`
 }
 
 type FriendshipUsecase interface {
