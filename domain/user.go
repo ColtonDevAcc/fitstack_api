@@ -24,6 +24,7 @@ type User struct {
 	CreatedAt     time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 	RefreshToken  string         `json:"refresh_token"`
+	Friendship    []*Friendship  `gorm:"many2many:friends"`
 }
 
 type UserUsecase interface {
