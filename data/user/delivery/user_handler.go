@@ -56,7 +56,7 @@ func (ur *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, err := ur.UUsecase.SignUp(requestedUser, c)
+	user, err := ur.UUsecase.SignUp(&requestedUser, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 

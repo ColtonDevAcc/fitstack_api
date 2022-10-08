@@ -28,7 +28,7 @@ type User struct {
 }
 
 type UserUsecase interface {
-	SignUp(user User, ctx context.Context) (*User, error)
+	SignUp(user *User, ctx context.Context) (*User, error)
 	SignInWithToken(ctx context.Context, token string) (*User, error)
 	SignInWithEmailAndPassword(ctx context.Context, login *dto.LoginInEmailAndPassword) (string, error)
 	RefreshToken(ctx context.Context, refresh_token string) (string, error)

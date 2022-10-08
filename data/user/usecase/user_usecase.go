@@ -53,7 +53,7 @@ func (u *userUsecase) GetByUuid(uuid string) (*domain.User, error) {
 	return user, nil
 }
 
-func (u *userUsecase) Store(user domain.User) error {
+func (u *userUsecase) Store(user *domain.User) error {
 	err := u.userRepo.Store(user)
 	if err != nil {
 		logrus.Error(err)
@@ -87,13 +87,13 @@ func (u *userUsecase) SignUp(user *domain.User, ctx context.Context) (*domain.Us
 	user.UUID = fbu.UID
 	user.CreatedAt = time.Now()
 
-	user, err = u.userRepo.SignUp(&user)
+	user, err = u.userRepo.SignUp(user)
 	if err != nil {
 		logrus.Error(err)
 		return &domain.User{DisplayName: "Null User"}, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*domain.User, error) {
