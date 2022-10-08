@@ -31,23 +31,23 @@ func (u *userUsecase) Delete(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) GetByEmail(email string) (domain.User, error) {
+func (u *userUsecase) GetByEmail(email string) (*domain.User, error) {
 	user, err := u.userRepo.GetByEmail(email)
 	if err != nil {
 		logrus.Error(err)
 
-		return domain.User{DisplayName: "Null User"}, err
+		return &domain.User{DisplayName: "Null User"}, err
 	}
 
 	return user, nil
 }
 
-func (u *userUsecase) GetByUuid(uuid string) (domain.User, error) {
+func (u *userUsecase) GetByUuid(uuid string) (*domain.User, error) {
 	user, err := u.userRepo.GetByUuid(uuid)
 	if err != nil {
 		logrus.Error(err)
 
-		return domain.User{DisplayName: "Null User"}, err
+		return &domain.User{DisplayName: "Null User"}, err
 	}
 
 	return user, nil
@@ -75,44 +75,38 @@ func (u *userUsecase) Update(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) SignUp(user domain.User, ctx context.Context) (domain.User, error) {
+func (u *userUsecase) SignUp(user *domain.User, ctx context.Context) (*domain.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
-
-	err := u.userRepo.CheckUniqueFields(user)
-	if err != nil {
-		logrus.Error(err)
-		return domain.User{}, err
-	}
 
 	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
 		logrus.Error(err)
-		return domain.User{}, err
+		return &domain.User{}, err
 	}
 
 	user.UUID = fbu.UID
 	user.CreatedAt = time.Now()
 
-	user, err = u.userRepo.SignUp(user)
+	user, err = u.userRepo.SignUp(&user)
 	if err != nil {
 		logrus.Error(err)
-		return domain.User{DisplayName: "Null User"}, err
+		return &domain.User{DisplayName: "Null User"}, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
-func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (domain.User, error) {
+func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*domain.User, error) {
 	at, err := u.client.VerifyIDToken(ctx, token)
 	if err != nil {
 		logrus.Error(err)
-		return domain.User{}, err
+		return &domain.User{}, err
 	}
 
 	user, err := u.userRepo.SignInWithToken(at.UID)
 	if err != nil {
 		logrus.Error(err)
-		return domain.User{}, err
+		return &domain.User{}, err
 	}
 
 	return user, nil

@@ -24,30 +24,29 @@ type User struct {
 	CreatedAt     time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 	RefreshToken  string         `json:"refresh_token"`
-	Friendship    []*Friendship  `gorm:"many2many:friends"`
+	Friendship    []Friendship   `gorm:"many2many:users_friendships;"`
 }
 
 type UserUsecase interface {
-	SignUp(user User, ctx context.Context) (User, error)
-	SignInWithToken(ctx context.Context, token string) (User, error)
+	SignUp(user User, ctx context.Context) (*User, error)
+	SignInWithToken(ctx context.Context, token string) (*User, error)
 	SignInWithEmailAndPassword(ctx context.Context, login *dto.LoginInEmailAndPassword) (string, error)
 	RefreshToken(ctx context.Context, refresh_token string) (string, error)
-	GetByUuid(uuid string) (User, error)
+	GetByUuid(uuid string) (*User, error)
 	Update(uuid string) error
-	GetByEmail(email string) (User, error)
-	Store(user User) error
+	GetByEmail(email string) (*User, error)
+	Store(user *User) error
 	Delete(uuid string) error
 }
 
 type UserRepository interface {
-	SignUp(user User) (User, error)
-	SignInWithToken(uuid string) (User, error)
+	SignUp(user *User) (*User, error)
+	SignInWithToken(uuid string) (*User, error)
 	SignInWithEmailAndPassword(login *dto.LoginInEmailAndPassword) (string, error)
 	RefreshToken(refresh_token string) (string, error)
-	GetByUuid(uuid string) (User, error)
-	CheckUniqueFields(user User) error
+	GetByUuid(uuid string) (*User, error)
 	Update(uuid string) error
-	GetByEmail(email string) (User, error)
-	Store(user User) error
+	GetByEmail(email string) (*User, error)
+	Store(user *User) error
 	Delete(uuid string) error
 }

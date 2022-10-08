@@ -11,96 +11,98 @@ import (
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	"github.com/goccy/go-json"
+	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 type userRepository struct {
-	Database gorm.DB
+	Database pgx.Conn
 }
 
-func NewUserRepository(db gorm.DB) domain.UserRepository {
+func NewUserRepository(db pgx.Conn) domain.UserRepository {
 	return &userRepository{db}
 }
 
 func (u *userRepository) Delete(uuid string) error {
-	tx := u.Database.Where(domain.User{UUID: uuid}).Delete(&domain.User{})
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
+	//TODO:
+	// err := u.Database.QueryRow(context.Background(), "select name, weight from widgets where id=$1", 42).Scan(&name, &weight)
+	// if err != nil {
+	// 	logrus.Error(err)
 
-		return tx.Error
-	}
+	// 	return err
+	// }
 
 	return nil
 }
 
-func (u *userRepository) GetByEmail(email string) (domain.User, error) {
-	var user domain.User
-	tx := u.Database.Where(domain.User{Email: email}).Find(&user)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
+func (u *userRepository) GetByEmail(email string) (*domain.User, error) {
+	//TODO:
+	// var user domain.User
+	// tx := u.Database.Where(domain.User{Email: email}).Find(&user)
+	// if tx.Error != nil {
+	// 	logrus.Error(tx.Error)
 
-		return domain.User{DisplayName: "Null User"}, tx.Error
-	}
+	// 	return domain.User{DisplayName: "Null User"}, tx.Error
+	// }
 
-	return user, nil
+	return nil, nil
 }
 
-func (u *userRepository) GetByUuid(uuid string) (domain.User, error) {
-	var user domain.User
-	tx := u.Database.Where(domain.User{UUID: uuid}).Find(&user)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
+func (u *userRepository) GetByUuid(uuid string) (*domain.User, error) {
+	// var user domain.User
+	// tx := u.Database.Where(domain.User{UUID: uuid}).Find(&user)
+	// if tx.Error != nil {
+	// 	logrus.Error(tx.Error)
 
-		return domain.User{DisplayName: "Null User"}, tx.Error
-	}
+	// 	return domain.User{DisplayName: "Null User"}, tx.Error
+	// }
 
-	return user, nil
+	return nil, nil
 }
 
-func (u *userRepository) Store(user domain.User) error {
-	tx := u.Database.Create(&user)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
+func (u *userRepository) Store(user *domain.User) error {
+	// tx := u.Database.Create(&user)
+	// if tx.Error != nil {
+	// 	logrus.Error(tx.Error)
 
-		return tx.Error
-	}
+	// 	return tx.Error
+	// }
 
 	return nil
 }
 
 func (u *userRepository) Update(uuid string) error {
-	tx := u.Database.Where(domain.User{UUID: uuid}).Save(&domain.User{})
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
+	// tx := u.Database.Where(domain.User{UUID: uuid}).Save(&domain.User{})
+	// if tx.Error != nil {
+	// 	logrus.Error(tx.Error)
 
-		return tx.Error
-	}
+	// 	return tx.Error
+	// }
 
 	return nil
 }
 
-func (u *userRepository) SignUp(user domain.User) (domain.User, error) {
-	tx := u.Database.Create(&user)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
+func (u *userRepository) SignUp(user *domain.User) (*domain.User, error) {
+	// tx := u.Database.Create(&user)
+	// if tx.Error != nil {
+	// 	logrus.Error(tx.Error)
 
-		return domain.User{DisplayName: "Null User"}, tx.Error
-	}
+	// 	return domain.User{DisplayName: "Null User"}, tx.Error
+	// }
 
-	return user, nil
+	return nil, nil
 }
 
-func (u *userRepository) SignInWithToken(uuid string) (domain.User, error) {
-	user, err := u.GetByUuid(uuid)
-	if err != nil {
-		logrus.Error(err)
+func (u *userRepository) SignInWithToken(uuid string) (*domain.User, error) {
+	// user, err := u.GetByUuid(uuid)
+	// if err != nil {
+	// 	logrus.Error(err)
 
-		return domain.User{}, err
-	}
+	// 	return domain.User{}, err
+	// }
 
 	// u.Database.Where(user).Save()
-	return user, nil
+	return nil, nil
 }
 
 func (u *userRepository) RefreshToken(refresh_token string) (string, error) {
@@ -148,36 +150,4 @@ func (u *userRepository) SignInWithEmailAndPassword(login *dto.LoginInEmailAndPa
 
 	//Convert the body to type string
 	return string(body), nil
-}
-
-func (u *userRepository) CheckUniqueFields(user domain.User) error {
-	var userEmailCheck domain.User
-	tx := u.Database.Where(domain.User{Email: user.Email}).Take(&userEmailCheck)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
-
-		return tx.Error
-	}
-
-	var userDisplayNameCheck domain.User
-	tx = u.Database.Where(domain.User{DisplayName: user.DisplayName}).Take(&userDisplayNameCheck)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
-
-		return tx.Error
-	}
-
-	var userPhoneNumberCheck domain.User
-	tx = u.Database.Where(domain.User{PhoneNumber: user.PhoneNumber}).Take(&userPhoneNumberCheck)
-	if tx.Error != nil {
-		logrus.Error(tx.Error)
-
-		return tx.Error
-	}
-	emptyUser := domain.User{}
-	if userDisplayNameCheck.DisplayName != emptyUser.DisplayName && userPhoneNumberCheck.PhoneNumber != emptyUser.PhoneNumber && userEmailCheck.Email != emptyUser.Email {
-		return fmt.Errorf("user already exits")
-	}
-
-	return nil
 }

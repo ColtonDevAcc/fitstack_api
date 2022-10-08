@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
+	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 type friendshipRepository struct {
-	Database gorm.DB
+	Database pgx.Conn
 }
 
-func NewFriendshipRepository(db gorm.DB) domain.FriendshipRepository {
+func NewFriendshipRepository(db pgx.Conn) domain.FriendshipRepository {
 	return &friendshipRepository{Database: db}
 }
 
