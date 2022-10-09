@@ -2,12 +2,14 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"firebase.google.com/go/v4/auth"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -78,19 +80,32 @@ func (u *userUsecase) Update(uuid string) error {
 func (u *userUsecase) SignUp(user *domain.User, ctx context.Context) (*domain.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
+	err := u.userRepo.CheckUniqueFields(user)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
 	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
 		logrus.Error(err)
-		return &domain.User{}, err
+		return nil, err
 	}
 
-	user.UUID = fbu.UID
+	id, err := uuid.FromString(fbu.UID)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	fmt.Printf("user uuid %s", user.Id)
+
+	user.Id = id
 	user.CreatedAt = time.Now()
 
 	user, err = u.userRepo.SignUp(user)
 	if err != nil {
 		logrus.Error(err)
-		return &domain.User{DisplayName: "Null User"}, err
+		return nil, err
 	}
 
 	return user, nil

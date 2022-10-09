@@ -12,7 +12,7 @@ import (
 func NewDatabase(config config.Config) (*pgx.Conn, error) {
 	fmt.Println("Setting up database...")
 
-	db, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	db, err := pgx.Connect(context.Background(), os.Getenv("DB_URL"))
 	if err != nil {
 		fmt.Println("failed to setup database error:", err)
 		return db, err

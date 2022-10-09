@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -83,14 +84,19 @@ func (u *userRepository) Update(uuid string) error {
 }
 
 func (u *userRepository) SignUp(user *domain.User) (*domain.User, error) {
-	// tx := u.Database.Create(&user)
-	// if tx.Error != nil {
-	// 	logrus.Error(tx.Error)
+	sqlStatement := `
+	INSERT INTO users (id, display_name, first_name, last_name, phone_number, phone_verified, date_of_birth, email, email_verified)
+	VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9)
+	RETURNING *
+	`
 
-	// 	return domain.User{DisplayName: "Null User"}, tx.Error
-	// }
+	err := u.Database.QueryRow(context.Background(), sqlStatement, user.Id, user.DisplayName, user.FirstName, user.LastName, user.PhoneNumber, user.PhoneVerified, user.DateOfBirth, user.Email, user.EmailVerified).Scan(&user)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
 
-	return nil, nil
+	return user, nil
 }
 
 func (u *userRepository) SignInWithToken(uuid string) (*domain.User, error) {
@@ -150,4 +156,21 @@ func (u *userRepository) SignInWithEmailAndPassword(login *dto.LoginInEmailAndPa
 
 	//Convert the body to type string
 	return string(body), nil
+}
+
+func (u *userRepository) CheckUniqueFields(user *domain.User) error {
+	var userCheck *domain.User
+	sqlStatement := fmt.Sprintf(`
+	SELECT * FROM users WHERE email='%s'
+	OR (display_name='%s')
+	OR (phone_number='%s')
+	`, user.Email, user.DisplayName, user.PhoneNumber)
+
+	err := u.Database.QueryRow(context.Background(), sqlStatement).Scan(&userCheck)
+	if err == nil {
+		logrus.Error(err)
+		return fmt.Errorf("user already exists")
+	}
+
+	return nil
 }
