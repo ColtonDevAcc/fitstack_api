@@ -11,6 +11,7 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/goccy/go-json"
 	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
@@ -90,11 +91,9 @@ func (u *userRepository) SignUp(user *domain.User) (*domain.User, error) {
 	RETURNING *
 	`
 
-	err := u.Database.QueryRow(context.Background(), sqlStatement, user.Id, user.DisplayName, user.FirstName, user.LastName, user.PhoneNumber, user.PhoneVerified, user.DateOfBirth, user.Email, user.EmailVerified).Scan(&user)
-	if err != nil {
-		logrus.Error(err)
-		return nil, err
-	}
+	rows, _ := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified)
+
+	pgxscan.ScanRow(&user, rows)
 
 	return user, nil
 }

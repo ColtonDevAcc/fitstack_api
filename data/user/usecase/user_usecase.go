@@ -2,14 +2,12 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"firebase.google.com/go/v4/auth"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -92,14 +90,7 @@ func (u *userUsecase) SignUp(user *domain.User, ctx context.Context) (*domain.Us
 		return nil, err
 	}
 
-	id, err := uuid.FromString(fbu.UID)
-	if err != nil {
-		logrus.Error(err)
-		return nil, err
-	}
-	fmt.Printf("user uuid %s", user.Id)
-
-	user.Id = id
+	user.Id = fbu.UID
 	user.CreatedAt = time.Now()
 
 	user, err = u.userRepo.SignUp(user)

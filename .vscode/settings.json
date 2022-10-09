@@ -8,6 +8,7 @@
     "gorm",
     "joho",
     "logrus",
+    "pgxscan",
     "sirupsen"
   ]
 }

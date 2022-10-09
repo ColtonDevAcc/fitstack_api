@@ -5,12 +5,11 @@ import (
 	"time"
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
-	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	Id            uuid.UUID      `gorm:"primaryKey;unique;not null" json:"user_id"`
+	Id            string         `gorm:"primaryKey;unique;not null" json:"user_id"`
 	Email         string         `gorm:"unique;not null" json:"email" binding:"required,email"`
 	Password      string         `gorm:"-:all" json:"password"`
 	DisplayName   string         `gorm:"unique;not null" json:"display_name" binding:"required"`
