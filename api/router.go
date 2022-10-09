@@ -6,7 +6,11 @@ import (
 	"os"
 
 	"firebase.google.com/go/v4/auth"
+	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/config"
+	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
+	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
+	_friendshipUsecase "github.com/VooDooStack/FitStackAPI/data/friendship/usecase"
 	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
 	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
 	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
@@ -51,10 +55,10 @@ func setUpHandlers(r *gin.Engine, db *pgx.Conn, fa auth.Client) {
 	//===========================User===========================//
 
 	//===========================Friendship===========================//
-	// friendshipRG := r.Group("/friendship")
-	// friendshipRG.Use(middleware.AuthJWT(&fa))
-	// friendshipRepo := _friendshipRepo.NewFriendshipRepository(*db)
-	// friendshipUsecase := _friendshipUsecase.NewFriendshipUsecase(friendshipRepo, &fa)
-	// _friendshipHandler.NewFriendshipHandler(friendshipRG, friendshipUsecase)
+	friendshipRG := r.Group("/friendship")
+	friendshipRG.Use(middleware.AuthJWT(&fa))
+	friendshipRepo := _friendshipRepo.NewFriendshipRepository(*db)
+	friendshipUsecase := _friendshipUsecase.NewFriendshipUsecase(friendshipRepo, &fa)
+	_friendshipHandler.NewFriendshipHandler(friendshipRG, friendshipUsecase)
 	//===========================Friendship===========================//
 }

@@ -5,10 +5,13 @@
     "dgrijalva",
     "fmodel",
     "forbsey",
+    "georgysavva",
     "gorm",
+    "jackc",
     "joho",
     "logrus",
     "pgxscan",
+    "scany",
     "sirupsen"
   ]
 }

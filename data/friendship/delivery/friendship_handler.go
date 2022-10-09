@@ -32,7 +32,7 @@ func (f *FriendshipHandler) AddFriend(c *gin.Context) {
 		return
 	}
 
-	friendship, err := f.FriendShipUsecase.AddFriend(req)
+	friendship, err := f.FriendShipUsecase.AddFriend(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 		return

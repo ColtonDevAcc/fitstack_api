@@ -92,6 +92,7 @@ func (u *userRepository) SignUp(user *domain.User) (*domain.User, error) {
 	`
 
 	rows, _ := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified)
+	defer rows.Close()
 
 	pgxscan.ScanRow(&user, rows)
 
