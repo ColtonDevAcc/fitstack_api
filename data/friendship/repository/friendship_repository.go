@@ -6,15 +6,15 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/georgysavva/scany/v2/pgxscan"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
 type friendshipRepository struct {
-	Database pgx.Conn
+	Database pgxpool.Pool
 }
 
-func NewFriendshipRepository(db pgx.Conn) domain.FriendshipRepository {
+func NewFriendshipRepository(db pgxpool.Pool) domain.FriendshipRepository {
 	return &friendshipRepository{Database: db}
 }
 

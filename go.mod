@@ -5,10 +5,13 @@ go 1.18
 require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/goccy/go-json v0.9.10
+	github.com/google/uuid v1.3.0
 	google.golang.org/api v0.87.0
 	google.golang.org/genproto v0.0.0-20220715211116-798f69b842b9
 	gorm.io/gorm v1.24.0
 )
+
+require github.com/jackc/pgx/v4 v4.6.1-0.20200606145419-4e5062306904
 
 require (
 	cloud.google.com/go v0.103.0 // indirect
@@ -23,15 +26,17 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.4.0 // indirect
 	github.com/googleapis/go-type-adapters v1.0.0 // indirect
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.5.1-0.20200601181101-fa742c524853 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.0.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.6.2 // indirect
-	github.com/jackc/pgx/v4 v4.10.1 // indirect
+	github.com/jackc/puddle v1.1.1 // indirect
 	github.com/jackc/puddle/v2 v2.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

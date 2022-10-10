@@ -6,13 +6,13 @@ import (
 	"os"
 
 	"github.com/VooDooStack/FitStackAPI/config"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewDatabase(config config.Config) (*pgx.Conn, error) {
+func NewDatabase(config config.Config) (*pgxpool.Pool, error) {
 	fmt.Println("Setting up database...")
 
-	db, err := pgx.Connect(context.Background(), os.Getenv("DB_URL"))
+	db, err := pgxpool.New(context.Background(), os.Getenv("DB_URL"))
 	if err != nil {
 		fmt.Println("failed to setup database error:", err)
 		return db, err

@@ -75,7 +75,7 @@ func (u *userUsecase) Update(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) SignUp(user *domain.User, ctx context.Context) (*domain.User, error) {
+func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*domain.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
 	err := u.userRepo.CheckUniqueFields(user)
@@ -93,13 +93,13 @@ func (u *userUsecase) SignUp(user *domain.User, ctx context.Context) (*domain.Us
 	user.Id = fbu.UID
 	user.CreatedAt = time.Now()
 
-	user, err = u.userRepo.SignUp(user)
+	newUser, err := u.userRepo.SignUp(user)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
 	}
 
-	return user, nil
+	return newUser, nil
 }
 
 func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*domain.User, error) {
@@ -109,7 +109,7 @@ func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*domai
 		return &domain.User{}, err
 	}
 
-	user, err := u.userRepo.SignInWithToken(at.UID)
+	user, err := u.userRepo.GetByUuid(at.UID)
 	if err != nil {
 		logrus.Error(err)
 		return &domain.User{}, err

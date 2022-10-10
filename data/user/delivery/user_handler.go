@@ -47,7 +47,7 @@ func (ur *UserHandler) FetchUser(c *gin.Context) {
 }
 
 func (ur *UserHandler) SignUp(c *gin.Context) {
-	requestedUser := domain.User{}
+	requestedUser := dto.UserSignUp{}
 	err := c.ShouldBindJSON(&requestedUser)
 	if err != nil {
 		logrus.Error(err)

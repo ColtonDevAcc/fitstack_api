@@ -13,15 +13,15 @@ import (
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/goccy/go-json"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
 type userRepository struct {
-	Database pgx.Conn
+	Database pgxpool.Pool
 }
 
-func NewUserRepository(db pgx.Conn) domain.UserRepository {
+func NewUserRepository(db pgxpool.Pool) domain.UserRepository {
 	return &userRepository{db}
 }
 
@@ -51,15 +51,17 @@ func (u *userRepository) GetByEmail(email string) (*domain.User, error) {
 }
 
 func (u *userRepository) GetByUuid(uuid string) (*domain.User, error) {
-	// var user domain.User
-	// tx := u.Database.Where(domain.User{UUID: uuid}).Find(&user)
-	// if tx.Error != nil {
-	// 	logrus.Error(tx.Error)
+	var user []*domain.User
+	sqlStatement := `
+	SELECT * FROM users
+	WHERE id=$1;
+	`
+	err := pgxscan.Select(context.Background(), &u.Database, &user, sqlStatement, uuid)
+	if err != nil {
+		return nil, err
+	}
 
-	// 	return domain.User{DisplayName: "Null User"}, tx.Error
-	// }
-
-	return nil, nil
+	return user[0], nil
 }
 
 func (u *userRepository) Store(user *domain.User) error {
@@ -84,31 +86,20 @@ func (u *userRepository) Update(uuid string) error {
 	return nil
 }
 
-func (u *userRepository) SignUp(user *domain.User) (*domain.User, error) {
+func (u *userRepository) SignUp(user *dto.UserSignUp) (*domain.User, error) {
+	newUser := domain.User{}
 	sqlStatement := `
-	INSERT INTO users (id, display_name, first_name, last_name, phone_number, phone_verified, date_of_birth, email, email_verified)
-	VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9)
+	INSERT INTO users (id, display_name, first_name, last_name, phone_number, phone_verified, date_of_birth, email, email_verified, photo_url)
+	VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9, $10)
 	RETURNING *
 	`
 
-	rows, _ := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified)
+	rows, _ := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified, &user.PhotoURL)
 	defer rows.Close()
 
-	pgxscan.ScanRow(&user, rows)
+	pgxscan.ScanRow(&newUser, rows)
 
-	return user, nil
-}
-
-func (u *userRepository) SignInWithToken(uuid string) (*domain.User, error) {
-	// user, err := u.GetByUuid(uuid)
-	// if err != nil {
-	// 	logrus.Error(err)
-
-	// 	return domain.User{}, err
-	// }
-
-	// u.Database.Where(user).Save()
-	return nil, nil
+	return &newUser, nil
 }
 
 func (u *userRepository) RefreshToken(refresh_token string) (string, error) {
@@ -158,7 +149,7 @@ func (u *userRepository) SignInWithEmailAndPassword(login *dto.LoginInEmailAndPa
 	return string(body), nil
 }
 
-func (u *userRepository) CheckUniqueFields(user *domain.User) error {
+func (u *userRepository) CheckUniqueFields(user *dto.UserSignUp) error {
 	var userCheck *domain.User
 	sqlStatement := fmt.Sprintf(`
 	SELECT * FROM users WHERE email='%s'
