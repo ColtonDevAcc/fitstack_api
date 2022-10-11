@@ -12,6 +12,7 @@
     "jackc",
     "joho",
     "logrus",
+    "pgxpool",
     "pgxscan",
     "scany",
     "sirupsen"

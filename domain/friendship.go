@@ -9,14 +9,14 @@ import (
 
 // this is a friendship table struct
 type Friendship struct {
-	Id           uuid.UUID `json:"id"`
-	FromUserId   string    `json:"from_user"`
-	ToUserId     string    `json:"to_user" binding:"required"`
-	Accepted     bool      `json:"accepted"`
-	SentTime     time.Time `json:"sent_time"`
-	ResponseTime time.Time `json:"response_time"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	DeletedAt    time.Time `json:"deleted_at"`
+	Id           uuid.UUID  `json:"id"`
+	FromUser     string     `json:"from_user"`
+	ToUser       string     `json:"to_user" binding:"required"`
+	Accepted     bool       `json:"accepted"`
+	SentTime     time.Time  `json:"sent_time"`
+	ResponseTime *time.Time `json:"response_time"`
+	UpdatedAt    time.Time  `json:"updated_at"`
+	DeletedAt    *time.Time `json:"deleted_at"`
 }
 
 type FriendshipUsecase interface {

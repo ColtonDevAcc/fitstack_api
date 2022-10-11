@@ -96,8 +96,13 @@ func (u *userRepository) SignUp(user *dto.UserSignUp) (*domain.User, error) {
 
 	rows, _ := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified, &user.PhotoURL)
 	defer rows.Close()
+	fmt.Print(rows)
 
-	pgxscan.ScanRow(&newUser, rows)
+	err := pgxscan.ScanRow(&newUser, rows)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
 
 	return &newUser, nil
 }

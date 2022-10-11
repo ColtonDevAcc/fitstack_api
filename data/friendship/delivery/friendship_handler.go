@@ -3,7 +3,9 @@ package delivery
 import (
 	"net/http"
 	"strings"
+	"time"
 
+	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +33,10 @@ func (f *FriendshipHandler) AddFriend(c *gin.Context) {
 		c.JSON(400, ResponseError{Message: err.Error()})
 		return
 	}
+
+	client := c.MustGet("FIREBASE_ID_TOKEN").(*auth.Token)
+	req.FromUser = client.UID
+	req.SentTime = time.Now()
 
 	friendship, err := f.FriendShipUsecase.AddFriend(&req)
 	if err != nil {

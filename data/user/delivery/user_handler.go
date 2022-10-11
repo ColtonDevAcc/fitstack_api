@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"net/http"
-	"strings"
 
 	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/api/middleware"
@@ -76,19 +75,7 @@ func (ur *UserHandler) DeleteUser(c *gin.Context) {
 }
 
 func (ur *UserHandler) SignInWithToken(c *gin.Context) {
-	auth := c.Request.Header.Get("Authorization")
-	if auth == "" {
-		c.String(http.StatusForbidden, "No Authorization header provided")
-		c.Abort()
-		return
-	}
-
-	token := strings.TrimPrefix(auth, "Bearer ")
-	if token == auth {
-		c.String(http.StatusForbidden, "Could not find bearer token in Authorization header")
-		c.Abort()
-		return
-	}
+	token := c.GetString("token")
 
 	user, err := ur.UUsecase.SignInWithToken(c, token)
 	if err != nil {

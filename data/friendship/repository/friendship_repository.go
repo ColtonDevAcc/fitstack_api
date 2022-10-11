@@ -2,10 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
-	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
@@ -19,28 +17,20 @@ func NewFriendshipRepository(db pgxpool.Pool) domain.FriendshipRepository {
 }
 
 func (f *friendshipRepository) AddFriend(friendship *domain.Friendship) (*domain.Friendship, error) {
-	var id *string
-	userCheckSql := `
-	SELECT * FROM users
-	WHERE id='$1';
-	RETURNING id
-	`
-	err := f.Database.QueryRow(context.Background(), userCheckSql, &friendship.ToUserId).Scan(&id)
-	if err != nil {
-		logrus.Error(err)
-		return nil, fmt.Errorf("user does not exists")
-	}
-
+	newFriend := domain.Friendship{}
 	insertStatement := `
-	INSERT INTO friends ( to_user, from_user, updated_at, accepted, sent_time, deleted_at)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	INSERT INTO friends (to_user, from_user, sent_time)
+	VALUES ($1, $2, $3)
 	RETURNING *
 	`
-	rows, _ := f.Database.Query(context.Background(), insertStatement, &friendship.ToUserId, &friendship.FromUserId, &friendship.UpdatedAt, &friendship.Accepted, &friendship.SentTime, &friendship.DeletedAt)
-	defer rows.Close()
-	pgxscan.ScanRow(&friendship, rows)
+	row := f.Database.QueryRow(context.Background(), insertStatement, &friendship.ToUser, &friendship.FromUser, &friendship.SentTime)
+	err := row.Scan(&newFriend)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
 
-	return friendship, nil
+	return &newFriend, nil
 
 }
 
