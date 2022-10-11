@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
@@ -20,11 +22,12 @@ func (f *friendshipRepository) AddFriend(friendship *domain.Friendship) (*domain
 	newFriend := domain.Friendship{}
 	insertStatement := `
 	INSERT INTO friends (to_user, from_user, sent_time)
-	VALUES ($1, $2, $3)
-	RETURNING *
-	`
+	VALUES ($1, $2, $3)`
+	_, err := f.Database.Exec(context.Background(), insertStatement, &friendship.ToUser, &friendship.FromUser, &friendship.SentTime)
+	//TODO: return inserted row
 	row := f.Database.QueryRow(context.Background(), insertStatement, &friendship.ToUser, &friendship.FromUser, &friendship.SentTime)
-	err := row.Scan(&newFriend)
+
+	err = row.Scan(&newFriend)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
@@ -35,24 +38,28 @@ func (f *friendshipRepository) AddFriend(friendship *domain.Friendship) (*domain
 }
 
 func (f *friendshipRepository) RemoveFriend(friendship *domain.Friendship) error {
-	// tx := f.Database.Where(friendship).First(&friendship).Delete(&friendship)
-	// if tx.Error != nil {
-	// 	logrus.Error(tx.Error)
-
-	// 	return tx.Error
-	// }
-
 	return nil
-
 }
 
 func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.Friendship, error) {
-	// var friendshipList []domain.Friendship
-	// tx := f.Database.Model(domain.Friendship{}).Where(domain.Friendship{ToUserId: uuid}).Or(domain.Friendship{FromUserId: uuid}).Find(&friendshipList)
-	// if tx.Error != nil {
-	// 	logrus.Error(tx.Error)
-	// 	return []domain.Friendship{}, tx.Error
-	// }
-	// fmt.Printf("============================================\nfriendships: %v \n============================================\n", friendshipList)
-	return nil, nil
+	friendship := []*domain.Friendship{}
+
+	_, err := f.Database.Exec(context.Background(), `DECLARE curs CURSOR WITH HOLD FOR SELECT * FROM friends where to_user = $1;`, uuid)
+	if err != nil {
+		logrus.Error(err)
+		return nil, fmt.Errorf("user does not exists")
+	}
+	fetchStatement := `
+        FETCH FROM curs;`
+
+	rows, err := f.Database.Query(context.Background(), fetchStatement)
+	if err != nil {
+		logrus.Error(err)
+		return nil, fmt.Errorf("user does not exists")
+	}
+	defer rows.Close()
+	pgxscan.ScanRow(&friendship, rows)
+
+	f.Database.Exec(context.Background(), `CLOSE curs;`)
+	return friendship, nil
 }

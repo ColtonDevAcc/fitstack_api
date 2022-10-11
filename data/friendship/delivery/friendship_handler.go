@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"net/http"
-	"strings"
 	"time"
 
 	"firebase.google.com/go/v4/auth"
@@ -50,19 +49,7 @@ func (f *FriendshipHandler) AddFriend(c *gin.Context) {
 func (f *FriendshipHandler) RemoveFriend(c *gin.Context) {}
 
 func (f *FriendshipHandler) GetFriends(c *gin.Context) {
-	auth := c.Request.Header.Get("Authorization")
-	if auth == "" {
-		c.String(http.StatusForbidden, "No Authorization header provided")
-		c.Abort()
-		return
-	}
-
-	token := strings.TrimPrefix(auth, "Bearer ")
-	if token == auth {
-		c.String(http.StatusForbidden, "Could not find bearer token in Authorization header")
-		c.Abort()
-		return
-	}
+	token := c.MustGet("token").(string)
 
 	friends, err := f.FriendShipUsecase.GetFriends(c, token)
 	if err != nil {
