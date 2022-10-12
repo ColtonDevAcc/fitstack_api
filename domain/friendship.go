@@ -9,7 +9,7 @@ import (
 
 // this is a friendship table struct
 type Friendship struct {
-	Id           uuid.UUID  `json:"id"`
+	Id           *uuid.UUID `json:"id"`
 	FromUser     string     `json:"from_user"`
 	ToUser       string     `json:"to_user" binding:"required"`
 	Accepted     bool       `json:"accepted"`
@@ -22,11 +22,11 @@ type Friendship struct {
 type FriendshipUsecase interface {
 	AddFriend(friendship *Friendship) (*Friendship, error)
 	RemoveFriend(ctx context.Context, friendship *Friendship) error
-	GetFriends(ctx context.Context, token string) ([]*Friendship, error)
+	GetFriends(ctx context.Context, token string) ([]*User, error)
 }
 
 type FriendshipRepository interface {
 	AddFriend(friendship *Friendship) (*Friendship, error)
 	RemoveFriend(friendship *Friendship) error
-	GetFriends(uuid string) ([]*Friendship, error)
+	GetFriends(uuid string) ([]*User, error)
 }

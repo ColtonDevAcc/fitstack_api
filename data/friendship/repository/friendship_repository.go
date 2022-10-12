@@ -19,47 +19,75 @@ func NewFriendshipRepository(db pgxpool.Pool) domain.FriendshipRepository {
 }
 
 func (f *friendshipRepository) AddFriend(friendship *domain.Friendship) (*domain.Friendship, error) {
-	newFriend := domain.Friendship{}
-	insertStatement := `
-	INSERT INTO friends (to_user, from_user, sent_time)
-	VALUES ($1, $2, $3)`
-	_, err := f.Database.Exec(context.Background(), insertStatement, &friendship.ToUser, &friendship.FromUser, &friendship.SentTime)
-	//TODO: return inserted row
-	row := f.Database.QueryRow(context.Background(), insertStatement, &friendship.ToUser, &friendship.FromUser, &friendship.SentTime)
-
-	err = row.Scan(&newFriend)
+	var newFriend *domain.Friendship
+	friend, err := f.getFriends_ToAndFrom(friendship.ToUser, friendship.FromUser)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
 	}
 
-	return &newFriend, nil
+	if *friend == (domain.Friendship{}) {
+		insertStatement := `
+		INSERT INTO friends (to_user, from_user)
+		VALUES ((SELECT id from users WHERE id= $1 ), (SELECT id from users WHERE id= $2 )) ON CONFLICT DO NOTHING`
+		_, err = f.Database.Exec(context.Background(), insertStatement, friendship.ToUser, friendship.FromUser)
+		if err != nil {
+			logrus.Error(err)
+			return nil, err
+		}
 
+		newFriend, err = f.getFriends_ToAndFrom(friendship.ToUser, friendship.FromUser)
+		if err != nil {
+			logrus.Error(err)
+			return nil, err
+		}
+
+	} else {
+		fmt.Printf("here is your user %v", friend)
+		return nil, fmt.Errorf("friendship already exists")
+	}
+
+	return newFriend, nil
 }
 
 func (f *friendshipRepository) RemoveFriend(friendship *domain.Friendship) error {
 	return nil
 }
 
-func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.Friendship, error) {
-	friendship := []*domain.Friendship{}
+func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.User, error) {
+	friendship := []*domain.User{}
+	queryStatement := `WITH vars (toId, fromId) AS (
+  	VALUES ((SELECT to_user FROM friends WHERE to_user = $1 AND accepted =true),
+    (SELECT from_user FROM friends WHERE from_user = $1 AND accepted =true))
+	)
+	SELECT id,display_name, first_name, last_name, date_of_birth, photo_url, created_at FROM users, vars WHERE id = vars.toId OR id = vars.fromId
+	`
 
-	_, err := f.Database.Exec(context.Background(), `DECLARE curs CURSOR WITH HOLD FOR SELECT * FROM friends where to_user = $1;`, uuid)
+	rows, err := f.Database.Query(context.Background(), queryStatement, uuid)
 	if err != nil {
+		rows.Close()
 		logrus.Error(err)
-		return nil, fmt.Errorf("user does not exists")
+		return nil, err
 	}
-	fetchStatement := `
-        FETCH FROM curs;`
 
-	rows, err := f.Database.Query(context.Background(), fetchStatement)
-	if err != nil {
-		logrus.Error(err)
-		return nil, fmt.Errorf("user does not exists")
-	}
-	defer rows.Close()
-	pgxscan.ScanRow(&friendship, rows)
+	pgxscan.ScanAll(&friendship, rows)
 
-	f.Database.Exec(context.Background(), `CLOSE curs;`)
 	return friendship, nil
+}
+
+func (f *friendshipRepository) getFriends_ToAndFrom(to_user string, from_user string) (*domain.Friendship, error) {
+	friend := domain.Friendship{}
+	rows, err := f.Database.Query(context.Background(), `SELECT * FROM friends WHERE to_user = $1 AND from_user = $2`, to_user, from_user)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	defer rows.Close()
+	pgxscan.ScanOne(&friend, rows)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	return &friend, nil
 }

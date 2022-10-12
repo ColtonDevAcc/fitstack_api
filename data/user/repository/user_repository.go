@@ -11,7 +11,6 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
-	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/goccy/go-json"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
@@ -56,10 +55,13 @@ func (u *userRepository) GetByUuid(uuid string) (*domain.User, error) {
 	SELECT * FROM users
 	WHERE id=$1;
 	`
-	err := pgxscan.Select(context.Background(), &u.Database, &user, sqlStatement, uuid)
+	result, err := u.Database.Exec(context.Background(), sqlStatement, &u, &user, sqlStatement, uuid)
 	if err != nil {
+		logrus.Error(err)
 		return nil, err
 	}
+
+	fmt.Print(result)
 
 	return user[0], nil
 }
@@ -94,14 +96,17 @@ func (u *userRepository) SignUp(user *dto.UserSignUp) (*domain.User, error) {
 	RETURNING *
 	`
 
-	rows, _ := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified, &user.PhotoURL)
-	defer rows.Close()
-	fmt.Print(rows)
-
-	err := pgxscan.ScanRow(&newUser, rows)
+	rows, err := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified, &user.PhotoURL)
 	if err != nil {
 		logrus.Error(err)
-		return nil, err
+		fmt.Print(err)
+	}
+
+	defer rows.Close()
+	err = rows.Scan(&newUser)
+	if err != nil {
+		logrus.Error(err)
+		fmt.Print(err)
 	}
 
 	return &newUser, nil
