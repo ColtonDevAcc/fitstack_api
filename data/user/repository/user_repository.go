@@ -11,6 +11,7 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/goccy/go-json"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
@@ -50,20 +51,24 @@ func (u *userRepository) GetByEmail(email string) (*domain.User, error) {
 }
 
 func (u *userRepository) GetByUuid(uuid string) (*domain.User, error) {
-	var user []*domain.User
+	user := domain.User{}
 	sqlStatement := `
 	SELECT * FROM users
 	WHERE id=$1;
 	`
-	result, err := u.Database.Exec(context.Background(), sqlStatement, &u, &user, sqlStatement, uuid)
+	row, err := u.Database.Query(context.Background(), sqlStatement, uuid)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Error("error querying database error: %v", err)
 		return nil, err
 	}
 
-	fmt.Print(result)
+	err = pgxscan.ScanOne(&user, row)
+	if err != nil {
+		logrus.Error("error scanning row error: %v", err)
+		return nil, err
+	}
 
-	return user[0], nil
+	return &user, nil
 }
 
 func (u *userRepository) Store(user *domain.User) error {
@@ -98,15 +103,15 @@ func (u *userRepository) SignUp(user *dto.UserSignUp) (*domain.User, error) {
 
 	rows, err := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified, &user.PhotoURL)
 	if err != nil {
-		logrus.Error(err)
-		fmt.Print(err)
+		logrus.Error(fmt.Printf("error querying row err: %v", err))
+		return nil, err
 	}
 
 	defer rows.Close()
 	err = rows.Scan(&newUser)
 	if err != nil {
-		logrus.Error(err)
-		fmt.Print(err)
+		logrus.Error(fmt.Printf("error scanning row err: %v", err))
+		return nil, err
 	}
 
 	return &newUser, nil
