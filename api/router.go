@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"firebase.google.com/go/v4/auth"
+	"firebase.google.com/go/v4/storage"
 	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/config"
 	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
@@ -19,7 +20,7 @@ import (
 )
 
 func NewRouter(db *pgxpool.Pool) *gin.Engine {
-	client, err := config.SetupFirebase()
+	client, storage, err := config.SetupFirebase()
 	if err != nil {
 		log.Fatalln("failed to init firebase auth", err)
 	}
@@ -35,12 +36,12 @@ func NewRouter(db *pgxpool.Pool) *gin.Engine {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	r.SetTrustedProxies([]string{"192.168.1.2"})
 
-	setUpHandlers(r, db, *client)
+	setUpHandlers(r, db, *client, storage)
 
 	return r
 }
 
-func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client) {
+func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client, storage *storage.Client) {
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -50,7 +51,7 @@ func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client) {
 	//===========================User===========================//
 	userRG := r.Group("/user")
 	userRepo := _userRepo.NewUserRepository(*db)
-	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa)
+	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa, storage)
 	_userHandler.NewUserHandler(userRG, userUsecase, &fa)
 	//===========================User===========================//
 

@@ -180,3 +180,17 @@ func (u *userRepository) CheckUniqueFields(user *dto.UserSignUp) error {
 
 	return nil
 }
+
+func (u *userRepository) UpdateUserAvatar(uuid string, fileURL string) error {
+	sqlStatement := `
+	UPDATE users SET photo_url = $1
+	WHERE users.id = $2;
+	`
+	_, err := u.Database.Exec(context.Background(), sqlStatement, fileURL, uuid)
+	if err != nil {
+		logrus.Error("error querying database error: %v", err)
+		return fmt.Errorf("error updating user record: %v", err)
+	}
+
+	return nil
+}

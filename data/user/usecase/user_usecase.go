@@ -2,9 +2,15 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"net/url"
+	"os"
 	"time"
 
 	"firebase.google.com/go/v4/auth"
+	"firebase.google.com/go/v4/storage"
 
 	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
@@ -14,10 +20,11 @@ import (
 type userUsecase struct {
 	userRepo domain.UserRepository
 	client   auth.Client
+	storage  *storage.Client
 }
 
-func NewUserUseCase(ur domain.UserRepository, client auth.Client) domain.UserUsecase {
-	return &userUsecase{userRepo: ur, client: client}
+func NewUserUseCase(ur domain.UserRepository, client auth.Client, storage *storage.Client) domain.UserUsecase {
+	return &userUsecase{userRepo: ur, client: client, storage: storage}
 }
 
 func (u *userUsecase) Delete(uuid string) error {
@@ -76,7 +83,7 @@ func (u *userUsecase) Update(uuid string) error {
 }
 
 func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*domain.User, error) {
-	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
+	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName).PhotoURL(user.PhotoURL)
 
 	err := u.userRepo.CheckUniqueFields(user)
 	if err != nil {
@@ -135,4 +142,35 @@ func (u *userUsecase) SignInWithEmailAndPassword(ctx context.Context, login *dto
 	}
 
 	return response, nil
+}
+
+func (u *userUsecase) UpdateUserAvatar(ctx context.Context, uuid string, file *multipart.FileHeader, src io.Reader) (string, error) {
+	handler, err := u.storage.Bucket(os.Getenv("BUCKET"))
+	if err != nil {
+		return "", fmt.Errorf("error getting default bucket")
+	}
+
+	sw := handler.Object(file.Filename).NewWriter(context.Background())
+
+	if _, err := io.Copy(sw, src); err != nil {
+		return "", fmt.Errorf("error copying bucket: %v", err)
+	}
+
+	if err := sw.Close(); err != nil {
+		return "", fmt.Errorf("error closing bucket: %v", err)
+	}
+
+	avatarUrl, err := url.Parse("/" + os.Getenv("BUCKET") + "/" + sw.Attrs().Name)
+	if err != nil {
+		return "", fmt.Errorf("error parsing url from bucket %v", err)
+	}
+
+	urlString := avatarUrl.String()
+	err = u.userRepo.UpdateUserAvatar(uuid, urlString)
+	if err != nil {
+		logrus.Error(err)
+		return "", err
+	}
+
+	return urlString, nil
 }

@@ -53,8 +53,9 @@ func AuthJWT(client *auth.Client) gin.HandlerFunc {
 			})
 			return
 		}
-		c.Set(valName, idToken)
+		uuid := idToken.UID
 		c.Set("token", token)
+		c.Set("uuid", uuid)
 		c.Next()
 	}
 }

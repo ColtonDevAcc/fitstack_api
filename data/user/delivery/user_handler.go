@@ -1,6 +1,8 @@
 package delivery
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"firebase.google.com/go/v4/auth"
@@ -32,6 +34,7 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase, client *auth.Clie
 	g.DELETE("/delete", middleware.AuthJWT(client), handler.DeleteUser)
 	g.POST("/signin", middleware.AuthJWT(client), handler.SignInWithToken)
 	g.POST("/signin-email-password", handler.SignInWithEmailAndPassword)
+	g.POST("/update-avatar", middleware.AuthJWT(client), handler.UpdateUserAvatar)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -131,4 +134,20 @@ func (ur *UserHandler) RefreshToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, token)
+}
+
+func (ur *UserHandler) UpdateUserAvatar(c *gin.Context) {
+	uuid := c.GetString("uuid")
+	src, file, err := c.Request.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"error":   true,
+		})
+		return
+	}
+	log.Println(file.Filename)
+	ur.UUsecase.UpdateUserAvatar(c, uuid, file, src)
+
+	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 }

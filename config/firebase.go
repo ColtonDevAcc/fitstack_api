@@ -8,13 +8,19 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
+	"firebase.google.com/go/v4/storage"
 	"google.golang.org/api/option"
 )
 
-func SetupFirebase() (*auth.Client, error) {
+func SetupFirebase() (*auth.Client, *storage.Client, error) {
 	var opt option.ClientOption
 	var app *firebase.App
 	var err error
+	var storage *storage.Client
+
+	config := &firebase.Config{
+		StorageBucket: os.Getenv("BUCKET"),
+	}
 
 	file := os.Getenv("FIREBASE_CREDENTIALS_FILE")
 	if len(file) == 0 {
@@ -29,10 +35,21 @@ func SetupFirebase() (*auth.Client, error) {
 		fmt.Println("init firebase using specified credentials file")
 
 		opt = option.WithCredentialsFile(file)
+
 		//Firebase admin SDK initialization
-		app, err = firebase.NewApp(context.Background(), nil, opt)
+		app, err = firebase.NewApp(context.Background(), config, opt)
 		if err != nil {
 			panic(fmt.Sprintf("error initializing app: %v", err))
+		}
+
+		//setup storage bucket
+		storage, err = app.Storage(context.Background())
+		if err != nil {
+			panic(fmt.Sprintf("error initializing storage bucket: %v", err))
+		}
+
+		if storage == nil {
+			fmt.Printf("bucket is null ==============")
 		}
 	}
 
@@ -42,5 +59,5 @@ func SetupFirebase() (*auth.Client, error) {
 		panic(fmt.Sprintf("error initializing app: %v", err))
 	}
 
-	return auth, nil
+	return auth, storage, nil
 }

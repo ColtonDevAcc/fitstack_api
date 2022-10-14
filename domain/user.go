@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+	"io"
+	"mime/multipart"
 	"time"
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
@@ -26,6 +28,7 @@ type User struct {
 type UserUsecase interface {
 	SignUp(user *dto.UserSignUp, ctx context.Context) (*User, error)
 	SignInWithToken(ctx context.Context, token string) (*User, error)
+	UpdateUserAvatar(ctx context.Context, uuid string, file *multipart.FileHeader, src io.Reader) (string, error)
 	SignInWithEmailAndPassword(ctx context.Context, login *dto.LoginInEmailAndPassword) (string, error)
 	RefreshToken(ctx context.Context, refresh_token string) (string, error)
 	GetByUuid(uuid string) (*User, error)
@@ -38,6 +41,7 @@ type UserUsecase interface {
 type UserRepository interface {
 	SignUp(user *dto.UserSignUp) (*User, error)
 	SignInWithEmailAndPassword(login *dto.LoginInEmailAndPassword) (string, error)
+	UpdateUserAvatar(uuid string, fileURL string) error
 	RefreshToken(refresh_token string) (string, error)
 	GetByUuid(uuid string) (*User, error)
 	Update(uuid string) error

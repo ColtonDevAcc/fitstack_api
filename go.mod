@@ -55,7 +55,6 @@ require (
 require (
 	cloud.google.com/go/secretmanager v1.5.0
 	firebase.google.com/go/v4 v4.8.0
-	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0
