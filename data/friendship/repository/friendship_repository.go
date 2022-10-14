@@ -29,8 +29,11 @@ func (f *friendshipRepository) AddFriend(friendship *domain.Friendship) (*domain
 	if *friend == (domain.Friendship{}) {
 		insertStatement := `
 		INSERT INTO friends (to_user, from_user)
-		VALUES ((SELECT id from users WHERE id= $1 ), (SELECT id from users WHERE id= $2 )) ON CONFLICT DO NOTHING`
-		_, err = f.Database.Exec(context.Background(), insertStatement, friendship.ToUser, friendship.FromUser)
+		VALUES 
+		((SELECT id from users WHERE id= $1 ), 
+		(SELECT id from users WHERE id= $2 )) 
+		ON CONFLICT DO NOTHING`
+		_, err = f.Database.Exec(context.Background(), insertStatement, &friendship.ToUser, &friendship.FromUser)
 		if err != nil {
 			logrus.Error(err)
 			return nil, err
@@ -56,12 +59,14 @@ func (f *friendshipRepository) RemoveFriend(friendship *domain.Friendship) error
 
 func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.User, error) {
 	friendship := []*domain.User{}
-	queryStatement := `WITH vars (toId, fromId) AS (
-  	VALUES ((SELECT to_user FROM friends WHERE to_user = $1 AND accepted =true),
-    (SELECT from_user FROM friends WHERE from_user = $1 AND accepted =true))
-	)
-	SELECT id,display_name, first_name, last_name, date_of_birth, photo_url, created_at FROM users, vars WHERE id = vars.toId OR id = vars.fromId
-	`
+	queryStatement := `
+	SELECT DISTINCT
+	u.id, u.display_name, u.first_name, u.last_name, u.date_of_birth, u.photo_url, u.created_at
+	FROM
+	friends f
+	JOIN users u
+    on f.to_user = u.id AND f.accepted = true OR f.from_user = u.id AND f.accepted = true
+	WHERE f.from_user = $1 AND U.id != $1 OR f.to_user= $1 AND U.id != $1`
 
 	rows, err := f.Database.Query(context.Background(), queryStatement, uuid)
 	if err != nil {
