@@ -151,7 +151,6 @@ func (u *userUsecase) UpdateUserAvatar(ctx context.Context, uuid string, file *m
 	}
 
 	sw := handler.Object(file.Filename).NewWriter(context.Background())
-
 	if _, err := io.Copy(sw, src); err != nil {
 		return "", fmt.Errorf("error copying bucket: %v", err)
 	}

@@ -1,8 +1,6 @@
 package delivery
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
 	"firebase.google.com/go/v4/auth"
@@ -146,8 +144,15 @@ func (ur *UserHandler) UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	log.Println(file.Filename)
-	ur.UUsecase.UpdateUserAvatar(c, uuid, file, src)
 
-	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	url, err := ur.UUsecase.UpdateUserAvatar(c, uuid, file, src)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"error":   true,
+		})
+		return
+	}
+
+	c.String(http.StatusOK, url)
 }
