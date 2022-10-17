@@ -20,8 +20,8 @@ type User struct {
 	EmailVerified bool       `json:"email_verified"`
 	PhoneVerified bool       `json:"phone_verified"`
 	PhotoURL      *string    `json:"photo_url" binding:"omitempty,url"`
-	UpdatedAt     time.Time  `json:"updated_at"`
-	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     *time.Time `json:"updated_at"`
+	CreatedAt     *time.Time `json:"created_at"`
 	DeletedAt     *time.Time `json:"deleted_at"`
 }
 
@@ -36,6 +36,7 @@ type UserUsecase interface {
 	GetByEmail(email string) (*User, error)
 	Store(user *User) error
 	Delete(uuid string) error
+	GetUserProfile(uuid string) (*UserProfile, error)
 }
 
 type UserRepository interface {
@@ -49,4 +50,5 @@ type UserRepository interface {
 	Store(user *User) error
 	Delete(uuid string) error
 	CheckUniqueFields(user *dto.UserSignUp) error
+	GetUserProfile(uuid string) (*UserProfile, error)
 }

@@ -108,7 +108,7 @@ func (u *userRepository) SignUp(user *dto.UserSignUp) (*domain.User, error) {
 	}
 
 	defer rows.Close()
-	err = rows.Scan(&newUser)
+	err = pgxscan.ScanOne(&newUser, rows)
 	if err != nil {
 		logrus.Error(fmt.Printf("error scanning row err: %v", err))
 		return nil, err
@@ -193,4 +193,25 @@ func (u *userRepository) UpdateUserAvatar(uuid string, fileURL string) error {
 	}
 
 	return nil
+}
+
+func (u *userRepository) GetUserProfile(uuid string) (*domain.UserProfile, error) {
+	profile := domain.UserProfile{}
+	sqlStatement := `
+	SELECT * FROM user_profiles
+	WHERE id= $1;
+	`
+	row, err := u.Database.Query(context.Background(), sqlStatement, uuid)
+	if err != nil {
+		logrus.Error("error querying database error: %v", err)
+		return nil, err
+	}
+
+	err = pgxscan.ScanOne(&profile, row)
+	if err != nil {
+		logrus.Error("error scanning row error: %v", err)
+		return nil, err
+	}
+
+	return &profile, nil
 }

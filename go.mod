@@ -10,7 +10,6 @@ require (
 	github.com/jackc/pgx/v5 v5.0.2
 	google.golang.org/api v0.87.0
 	google.golang.org/genproto v0.0.0-20220715211116-798f69b842b9
-	gorm.io/gorm v1.24.0
 )
 
 require (
@@ -55,8 +54,6 @@ require (
 require (
 	cloud.google.com/go/secretmanager v1.5.0
 	firebase.google.com/go/v4 v4.8.0
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/pkg/errors v0.9.1

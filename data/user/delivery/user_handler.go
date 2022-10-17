@@ -33,6 +33,8 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase, client *auth.Clie
 	g.POST("/signin", middleware.AuthJWT(client), handler.SignInWithToken)
 	g.POST("/signin-email-password", handler.SignInWithEmailAndPassword)
 	g.POST("/update-avatar", middleware.AuthJWT(client), handler.UpdateUserAvatar)
+	g.GET("/profile", handler.GetUserProfile)
+
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -155,4 +157,29 @@ func (ur *UserHandler) UpdateUserAvatar(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, url)
+}
+
+func (ur *UserHandler) GetUserProfile(c *gin.Context) {
+	type uuid struct {
+		UUID string `json:"id"`
+	}
+
+	userUUID := uuid{}
+	err := c.ShouldBindJSON(&userUUID)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	profile, err := ur.UUsecase.GetUserProfile(userUUID.UUID)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, profile)
 }

@@ -83,7 +83,7 @@ func (u *userUsecase) Update(uuid string) error {
 }
 
 func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*domain.User, error) {
-	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName).PhotoURL(user.PhotoURL)
+	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
 	err := u.userRepo.CheckUniqueFields(user)
 	if err != nil {
@@ -172,4 +172,14 @@ func (u *userUsecase) UpdateUserAvatar(ctx context.Context, uuid string, file *m
 	}
 
 	return urlString, nil
+}
+
+func (u *userUsecase) GetUserProfile(uuid string) (*domain.UserProfile, error) {
+	profile, err := u.userRepo.GetUserProfile(uuid)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return profile, nil
 }
