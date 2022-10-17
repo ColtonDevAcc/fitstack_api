@@ -96,14 +96,25 @@ func (u *userRepository) Update(uuid string) error {
 func (u *userRepository) SignUp(user *dto.UserSignUp) (*domain.User, error) {
 	newUser := domain.User{}
 	sqlStatement := `
-	INSERT INTO users (id, display_name, first_name, last_name, phone_number, phone_verified, date_of_birth, email, email_verified, photo_url)
-	VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9, $10)
+	INSERT INTO users (id, first_name, last_name, phone_number, phone_verified, date_of_birth, email, email_verified)
+	VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8)
 	RETURNING *
 	`
 
 	rows, err := u.Database.Query(context.Background(), sqlStatement, &user.Id, &user.DisplayName, &user.FirstName, &user.LastName, &user.PhoneNumber, &user.PhoneVerified, &user.DateOfBirth, &user.Email, &user.EmailVerified, &user.PhotoURL)
 	if err != nil {
 		logrus.Error(fmt.Printf("error querying row err: %v", err))
+		return nil, err
+	}
+
+	sqlStatement = `
+	insert into user_profiles(display_name, avatar)
+	VALUES ($1, $2)
+	`
+
+	_, err = u.Database.Exec(context.Background(), sqlStatement, user.DisplayName, user.PhotoURL)
+	if err != nil {
+		logrus.Error(fmt.Printf("error executing command for profile err: %v", err))
 		return nil, err
 	}
 
@@ -183,7 +194,7 @@ func (u *userRepository) CheckUniqueFields(user *dto.UserSignUp) error {
 
 func (u *userRepository) UpdateUserAvatar(uuid string, fileURL string) error {
 	sqlStatement := `
-	UPDATE users SET photo_url = $1
+	UPDATE user_profiles SET avatar = $1
 	WHERE users.id = $2;
 	`
 	_, err := u.Database.Exec(context.Background(), sqlStatement, fileURL, uuid)

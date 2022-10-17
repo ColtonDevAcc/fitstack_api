@@ -43,7 +43,7 @@ func (u *userUsecase) GetByEmail(email string) (*domain.User, error) {
 	if err != nil {
 		logrus.Error(err)
 
-		return &domain.User{DisplayName: "Null User"}, err
+		return nil, err
 	}
 
 	return user, nil
@@ -54,7 +54,7 @@ func (u *userUsecase) GetByUuid(uuid string) (*domain.User, error) {
 	if err != nil {
 		logrus.Error(err)
 
-		return &domain.User{DisplayName: "Null User"}, err
+		return nil, err
 	}
 
 	return user, nil
