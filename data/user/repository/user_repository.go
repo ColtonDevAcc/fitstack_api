@@ -18,11 +18,12 @@ import (
 )
 
 type userRepository struct {
-	Database pgxpool.Pool
+	Database         pgxpool.Pool
+	FriendRepository domain.FriendshipRepository
 }
 
-func NewUserRepository(db pgxpool.Pool) domain.UserRepository {
-	return &userRepository{db}
+func NewUserRepository(db pgxpool.Pool, fr domain.FriendshipRepository) domain.UserRepository {
+	return &userRepository{db, fr}
 }
 
 func (u *userRepository) Delete(uuid string) error {
@@ -195,7 +196,7 @@ func (u *userRepository) CheckUniqueFields(user *dto.UserSignUp) error {
 func (u *userRepository) UpdateUserAvatar(uuid string, fileURL string) error {
 	sqlStatement := `
 	UPDATE user_profiles SET avatar = $1
-	WHERE users.id = $2;
+	WHERE user_profiles.id = $2;
 	`
 	_, err := u.Database.Exec(context.Background(), sqlStatement, fileURL, uuid)
 	if err != nil {
@@ -223,6 +224,14 @@ func (u *userRepository) GetUserProfile(uuid string) (*domain.UserProfile, error
 		logrus.Error("error scanning row error: %v", err)
 		return nil, err
 	}
+
+	friends, err := u.FriendRepository.GetFriends(uuid)
+	if err != nil {
+		logrus.Error("error getting friends: %v", err)
+		return nil, err
+	}
+
+	profile.Friends = friends
 
 	return &profile, nil
 }

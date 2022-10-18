@@ -13,5 +13,5 @@ type UserProfile struct {
 	SocialPoints     int              `json:"social_points"`
 	DaysLoggedInARow int              `json:"days_logged_in_a_row"`
 	UpdatedAt        *time.Time       `json:"updated_at"`
-	Avatar           string           `json:"avatar"`
+	Avatar           *string          `json:"avatar"`
 }

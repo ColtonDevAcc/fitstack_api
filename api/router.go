@@ -48,13 +48,6 @@ func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client, storage *sto
 		})
 	}) //.Use(middleware.AuthMiddleware)
 
-	//===========================User===========================//
-	userRG := r.Group("/user")
-	userRepo := _userRepo.NewUserRepository(*db)
-	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa, storage)
-	_userHandler.NewUserHandler(userRG, userUsecase, &fa)
-	//===========================User===========================//
-
 	//===========================Friendship===========================//
 	friendshipRG := r.Group("/friendship")
 	friendshipRG.Use(middleware.AuthJWT(&fa))
@@ -62,4 +55,11 @@ func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client, storage *sto
 	friendshipUsecase := _friendshipUsecase.NewFriendshipUsecase(friendshipRepo, &fa)
 	_friendshipHandler.NewFriendshipHandler(friendshipRG, friendshipUsecase)
 	//===========================Friendship===========================//
+
+	//===========================User===========================//
+	userRG := r.Group("/user")
+	userRepo := _userRepo.NewUserRepository(*db, friendshipRepo)
+	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa, storage)
+	_userHandler.NewUserHandler(userRG, userUsecase, &fa)
+	//===========================User===========================//
 }

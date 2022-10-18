@@ -59,14 +59,16 @@ func (f *friendshipRepository) RemoveFriend(friendship *domain.Friendship) error
 
 func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.UserProfile, error) {
 	friendship := []*domain.UserProfile{}
-	queryStatement := `
+	queryStatement :=
+		`
 	SELECT DISTINCT
-	u.id, u.challenges, u.achievements, u.statistics, u.fit_credit, u.display_name, u.fit_credit, u.social_points, u.days_logged_in_a_row, u.display_name, u.updated_at, u.avatar
+	u.id, u.challenges, u.achievements, u.statistics, u.fit_credit, u.social_points, u.days_logged_in_a_row, u.display_name, u.updated_at, u.avatar
 	FROM
 	friends f
 	JOIN user_profiles u
-        on f.to_user = u.id AND f.accepted = true OR f.from_user = u.id AND f.accepted = true
-	WHERE f.from_user = $1 AND U.id != $1 OR f.to_user= $1 AND U.id != $1`
+    on f.to_user = u.id AND f.accepted = true OR f.from_user = u.id AND f.accepted = true
+	WHERE f.from_user = $1 AND U.id != $1 OR f.to_user= $1 AND U.id != $1
+	`
 
 	rows, err := f.Database.Query(context.Background(), queryStatement, uuid)
 	if err != nil {
@@ -75,7 +77,13 @@ func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.UserProfile, e
 		return nil, err
 	}
 
-	pgxscan.ScanAll(&friendship, rows)
+	defer rows.Close()
+	err = pgxscan.ScanAll(&friendship, rows)
+	if err != nil {
+		rows.Close()
+		logrus.Error(err)
+		return nil, err
+	}
 
 	return friendship, nil
 }
