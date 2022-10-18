@@ -33,7 +33,8 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase, client *auth.Clie
 	g.POST("/signin", middleware.AuthJWT(client), handler.SignInWithToken)
 	g.POST("/signin-email-password", handler.SignInWithEmailAndPassword)
 	g.POST("/update-avatar", middleware.AuthJWT(client), handler.UpdateUserAvatar)
-	g.GET("/profile", handler.GetUserProfile)
+	g.GET("/fetch-profile", handler.fetchUserProfile)
+	g.GET("/profile", middleware.AuthJWT(client), handler.getUserProfile)
 
 }
 
@@ -159,7 +160,7 @@ func (ur *UserHandler) UpdateUserAvatar(c *gin.Context) {
 	c.String(http.StatusOK, url)
 }
 
-func (ur *UserHandler) GetUserProfile(c *gin.Context) {
+func (ur *UserHandler) fetchUserProfile(c *gin.Context) {
 	type uuid struct {
 		UUID string `json:"id"`
 	}
@@ -174,6 +175,20 @@ func (ur *UserHandler) GetUserProfile(c *gin.Context) {
 	}
 
 	profile, err := ur.UUsecase.GetUserProfile(userUUID.UUID)
+	if err != nil {
+		logrus.Error(err)
+
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, profile)
+}
+
+func (ur *UserHandler) getUserProfile(c *gin.Context) {
+	uuid := c.GetString("uuid")
+
+	profile, err := ur.UUsecase.GetUserProfile(uuid)
 	if err != nil {
 		logrus.Error(err)
 

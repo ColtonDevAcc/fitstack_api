@@ -22,11 +22,11 @@ type Friendship struct {
 type FriendshipUsecase interface {
 	AddFriend(friendship *Friendship) (*Friendship, error)
 	RemoveFriend(ctx context.Context, friendship *Friendship) error
-	GetFriends(ctx context.Context, token string) ([]*User, error)
+	GetFriends(ctx context.Context, token string) ([]*UserProfile, error)
 }
 
 type FriendshipRepository interface {
 	AddFriend(friendship *Friendship) (*Friendship, error)
 	RemoveFriend(friendship *Friendship) error
-	GetFriends(uuid string) ([]*User, error)
+	GetFriends(uuid string) ([]*UserProfile, error)
 }

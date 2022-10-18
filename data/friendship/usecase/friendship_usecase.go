@@ -35,7 +35,7 @@ func (f *FriendshipUsecase) RemoveFriend(ctx context.Context, friendship *domain
 	return nil
 }
 
-func (f *FriendshipUsecase) GetFriends(ctx context.Context, token string) ([]*domain.User, error) {
+func (f *FriendshipUsecase) GetFriends(ctx context.Context, token string) ([]*domain.UserProfile, error) {
 	at, err := f.client.VerifyIDToken(ctx, token)
 	if err != nil {
 		logrus.Error(err)

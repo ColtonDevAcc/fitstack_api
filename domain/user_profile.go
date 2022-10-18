@@ -7,6 +7,7 @@ type UserProfile struct {
 	Challenges       []*Challenge     `json:"challenges"`
 	Achievements     []*Achievement   `json:"achievements"`
 	Statistics       []*UserStatistic `json:"user_statistics"`
+	Friends          []*UserProfile   `json:"friends"`
 	DisplayName      string           `json:"display_name" binding:"required"`
 	FitCredit        int              `json:"fit_credits"`
 	SocialPoints     int              `json:"social_points"`

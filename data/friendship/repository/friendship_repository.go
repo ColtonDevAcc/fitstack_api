@@ -57,15 +57,15 @@ func (f *friendshipRepository) RemoveFriend(friendship *domain.Friendship) error
 	return nil
 }
 
-func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.User, error) {
-	friendship := []*domain.User{}
+func (f *friendshipRepository) GetFriends(uuid string) ([]*domain.UserProfile, error) {
+	friendship := []*domain.UserProfile{}
 	queryStatement := `
 	SELECT DISTINCT
-	u.id, u.display_name, u.first_name, u.last_name, u.date_of_birth, u.photo_url, u.created_at
+	u.id, u.challenges, u.achievements, u.statistics, u.fit_credit, u.display_name, u.fit_credit, u.social_points, u.days_logged_in_a_row, u.display_name, u.updated_at, u.avatar
 	FROM
 	friends f
-	JOIN users u
-    on f.to_user = u.id AND f.accepted = true OR f.from_user = u.id AND f.accepted = true
+	JOIN user_profiles u
+        on f.to_user = u.id AND f.accepted = true OR f.from_user = u.id AND f.accepted = true
 	WHERE f.from_user = $1 AND U.id != $1 OR f.to_user= $1 AND U.id != $1`
 
 	rows, err := f.Database.Query(context.Background(), queryStatement, uuid)
