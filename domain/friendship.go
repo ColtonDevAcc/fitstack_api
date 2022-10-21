@@ -20,13 +20,17 @@ type Friendship struct {
 }
 
 type FriendshipUsecase interface {
-	AddFriend(friendship *Friendship) (*Friendship, error)
+	AddFriend(friendship *Friendship) error
 	RemoveFriend(ctx context.Context, friendship *Friendship) error
-	GetFriends(ctx context.Context, token string) ([]*UserProfile, error)
+	GetFriends(ctx context.Context, uuid string) ([]*UserProfile, error)
+	GetFriendsList(ctx context.Context, uuid string) ([]*UserProfile, error)
+	GetFriend(ctx context.Context, email string) (*UserProfile, error)
 }
 
 type FriendshipRepository interface {
-	AddFriend(friendship *Friendship) (*Friendship, error)
+	AddFriend(friendship *Friendship) error
+	GetFriendsList(uuid string) ([]*UserProfile, error)
 	RemoveFriend(friendship *Friendship) error
 	GetFriends(uuid string) ([]*UserProfile, error)
+	GetFriend(email string) (*UserProfile, error)
 }

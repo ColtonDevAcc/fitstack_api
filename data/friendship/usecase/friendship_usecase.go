@@ -17,13 +17,20 @@ func NewFriendshipUsecase(fr domain.FriendshipRepository, fa *auth.Client) domai
 	return &FriendshipUsecase{friendshipRepo: fr, client: fa}
 }
 
-func (f *FriendshipUsecase) AddFriend(friendship *domain.Friendship) (*domain.Friendship, error) {
-	friendship, err := f.friendshipRepo.AddFriend(friendship)
+func (f *FriendshipUsecase) AddFriend(friendship *domain.Friendship) error {
+	_, err := f.client.GetUser(context.Background(), friendship.ToUser)
 	if err != nil {
-		return nil, err
+		logrus.Error(err)
+		return err
 	}
 
-	return friendship, nil
+	err = f.friendshipRepo.AddFriend(friendship)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	return nil
 }
 
 func (f *FriendshipUsecase) RemoveFriend(ctx context.Context, friendship *domain.Friendship) error {
@@ -35,14 +42,28 @@ func (f *FriendshipUsecase) RemoveFriend(ctx context.Context, friendship *domain
 	return nil
 }
 
-func (f *FriendshipUsecase) GetFriends(ctx context.Context, token string) ([]*domain.UserProfile, error) {
-	at, err := f.client.VerifyIDToken(ctx, token)
+func (f *FriendshipUsecase) GetFriends(ctx context.Context, uuid string) ([]*domain.UserProfile, error) {
+	friendship, err := f.friendshipRepo.GetFriends(uuid)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
 	}
 
-	friendship, err := f.friendshipRepo.GetFriends(at.UID)
+	return friendship, nil
+}
+
+func (f *FriendshipUsecase) GetFriendsList(ctx context.Context, uuid string) ([]*domain.UserProfile, error) {
+	friendship, err := f.friendshipRepo.GetFriendsList(uuid)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return friendship, nil
+}
+
+func (f *FriendshipUsecase) GetFriend(ctx context.Context, email string) (*domain.UserProfile, error) {
+	friendship, err := f.friendshipRepo.GetFriend(email)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err

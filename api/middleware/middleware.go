@@ -56,6 +56,7 @@ func AuthJWT(client *auth.Client) gin.HandlerFunc {
 		uuid := idToken.UID
 		c.Set("token", token)
 		c.Set("uuid", uuid)
+		c.Set("FIREBASE_ID_TOKEN", idToken)
 		c.Next()
 	}
 }
