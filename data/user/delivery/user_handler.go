@@ -35,7 +35,6 @@ func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase, client *auth.Clie
 	g.POST("/update-avatar", middleware.AuthJWT(client), handler.UpdateUserAvatar)
 	g.GET("/fetch-profile", handler.fetchUserProfile)
 	g.GET("/profile", middleware.AuthJWT(client), handler.getUserProfile)
-
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
