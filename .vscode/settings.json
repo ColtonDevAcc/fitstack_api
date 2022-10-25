@@ -1,13 +1,22 @@
 {
   "cSpell.words": [
+    "cloudsdktool",
     "cloudsql",
     "dbname",
     "dgrijalva",
     "fmodel",
     "forbsey",
+    "gcloud",
+    "georgysavva",
+    "goccy",
     "gorm",
+    "iampb",
+    "jackc",
     "joho",
     "logrus",
+    "pgxpool",
+    "pgxscan",
+    "scany",
     "sirupsen"
   ]
 }

@@ -1,6 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
 make: Entering directory `/Users/colton.bristow/Development/Projects/FitStackAPI'
 docker-compose up -d
- 
 make: Leaving directory `/Users/colton.bristow/Development/Projects/FitStackAPI'
  

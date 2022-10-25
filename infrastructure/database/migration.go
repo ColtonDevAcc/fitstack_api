@@ -1,16 +1,9 @@
 package database
 
-import (
-	"github.com/VooDooStack/FitStackAPI/domain"
-	"gorm.io/gorm"
-)
+import "github.com/jackc/pgx/v5/pgxpool"
 
 // MigrateDB - migrates our database and creates our comment table
-func MigrateDB(db *gorm.DB) error {
-	err := db.AutoMigrate(domain.User{})
-	if err != nil {
-		return err
-	}
+func MigrateDB(db *pgxpool.Pool) error {
 
 	return nil
 }
