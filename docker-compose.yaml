@@ -1,5 +1,5 @@
-version: "3.8"
-
+version: "3.9"
+# description: "This is a description"
 services:
   db:
     image: postgres:12.2-alpine
@@ -14,10 +14,10 @@ services:
       - fullstack
     volumes:
       - database_postgres:/var/lib/postgresql/data
-  
+    
   api:
     build: .
-    container_name: "fitstack-rest-api"
+    container_name: "fitstack-rest-api-dev"
     environment:
       DB_USERNAME: "postgres"
       DB_PASSWORD: "postgres"

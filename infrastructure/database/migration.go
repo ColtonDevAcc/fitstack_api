@@ -1,16 +1,9 @@
 package database
 
-import (
-	"os/user"
-
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jackc/pgx/v5/pgxpool"
 
 // MigrateDB - migrates our database and creates our comment table
-func MigrateDB(db *gorm.DB) error {
-	if result := db.AutoMigrate(&user.User{}); result.Error != nil {
-		return result.Error
-	}
+func MigrateDB(db *pgxpool.Pool) error {
 
 	return nil
 }

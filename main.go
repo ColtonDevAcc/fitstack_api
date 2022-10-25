@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/VooDooStack/FitStackAPI/api"
 	"github.com/VooDooStack/FitStackAPI/config"
 	"github.com/VooDooStack/FitStackAPI/infrastructure/database"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 type AppStatus struct {
@@ -19,16 +19,14 @@ type AppStatus struct {
 
 func run() error {
 	godotenv.Load(".env")
-	var cfg config.Config
-
-	cfg.Port = os.Getenv("PORT")
-	cfg.Env = os.Getenv("ENV")
-
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	cfg := config.Config{
+		Port: os.Getenv("PORT"),
+		Env:  os.Getenv("ENV"),
+	}
 
 	db, err := database.NewDatabase(cfg)
 	if err != nil {
-		logger.Fatal(err)
+		logrus.Fatal(err)
 		return err
 	}
 
@@ -38,11 +36,11 @@ func run() error {
 	// flag.IntVar(&cfg.Port, "port", 4000, "Server port to listen on")
 	err = http.Run(fmt.Sprintf(":%s", cfg.Port))
 	if err != nil {
-		logger.Fatal(err)
+		logrus.Fatal(err)
 		return err
 	}
 	//print where http server is listening. Address and port
-	logger.Println("Listening on port", cfg.Port)
+	logrus.Println("Listening on port", cfg.Port)
 
 	return nil
 }

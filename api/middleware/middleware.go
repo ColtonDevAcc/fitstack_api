@@ -5,9 +5,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
-	"firebase.google.com/go/auth"
+	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/infrastructure/secrets"
 	"github.com/gin-gonic/gin"
 )
@@ -44,10 +43,7 @@ func AuthMiddleware(c *gin.Context) {
 // Gin middleware for JWT auth
 func AuthJWT(client *auth.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		startTime := time.Now()
-
 		authHeader := c.Request.Header.Get(authorizationHeader)
-		log.Println("authHeader", authHeader)
 		token := strings.Replace(authHeader, "Bearer ", "", 1)
 		idToken, err := client.VerifyIDToken(c, token) // usually hits a local cache
 		if err != nil {
@@ -57,10 +53,10 @@ func AuthJWT(client *auth.Client) gin.HandlerFunc {
 			})
 			return
 		}
-
-		log.Println("Auth time:", time.Since(startTime))
-
-		c.Set(valName, idToken)
+		uuid := idToken.UID
+		c.Set("token", token)
+		c.Set("uuid", uuid)
+		c.Set("FIREBASE_ID_TOKEN", idToken)
 		c.Next()
 	}
 }
