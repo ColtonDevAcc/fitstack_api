@@ -7,12 +7,11 @@ import (
 )
 
 type Program struct {
-	ID                uuid.UUID          `json:"id"`
-	Title             string             `json:"title"`
-	Description       string             `json:"description"`
-	Creator           *user.UserProfile  `json:"creator"`
-	ExerciseRoutineId uuid.UUID          `json:"exercise_routine_id"`
-	Routine           []*routine.Routine `json:"workouts" db:"workouts"`
+	ID          uuid.UUID          `json:"id" db:"id"`
+	Title       string             `json:"title" db:"title"`
+	Description string             `json:"description" db:"description"`
+	Creator     *user.UserProfile  `json:"creator" db:"creator"`
+	Routine     []*routine.Routine `json:"workouts" db:"routine"`
 }
 
 type ProgramUsecase interface {

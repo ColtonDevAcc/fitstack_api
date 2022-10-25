@@ -1,11 +1,8 @@
 package exercise
 
-import "github.com/google/uuid"
-
 type Workout struct {
-	ID          int
-	Name        string
-	ProgramId   *uuid.UUID
-	Publisher   *string
-	WorkoutSets []*WorkoutSets
+	ID          int            `json:"id" db:"id"`
+	Name        string         `json:"name" db:"name"`
+	Publisher   *string        `json:"publisher" db:"routine"`
+	WorkoutSets []*WorkoutSets `json:"workout_sets" db:"workout_sets"`
 }

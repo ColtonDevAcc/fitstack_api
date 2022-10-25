@@ -1,6 +1,6 @@
 package exercise
 
 type WorkoutSets struct {
-	ID       int
-	Exercise *Exercise
+	ID       int       `json:"int" db:"int"`
+	Exercise *Exercise `json:"exercise" db:"exercise"`
 }
