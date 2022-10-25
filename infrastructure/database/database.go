@@ -18,6 +18,11 @@ func NewDatabase(config config.Config) (*pgxpool.Pool, error) {
 		return db, err
 	}
 
+	err = MigrateDB(db)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	return db, nil
 }
 
