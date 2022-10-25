@@ -15,6 +15,10 @@ import (
 	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
 	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
 	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
+
+	_programHandler "github.com/VooDooStack/FitStackAPI/data/program/delivery"
+	_programRepo "github.com/VooDooStack/FitStackAPI/data/program/repository"
+	_programUseCase "github.com/VooDooStack/FitStackAPI/data/program/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -62,4 +66,12 @@ func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client, storage *sto
 	userUsecase := _userUseCase.NewUserUseCase(userRepo, fa, storage)
 	_userHandler.NewUserHandler(userRG, userUsecase, &fa)
 	//===========================User===========================//
+
+	//===========================Program===========================//
+	programRG := r.Group("/program")
+	programRG.Use(middleware.AuthJWT(&fa))
+	programRepo := _programRepo.NewProgramRepository(*db)
+	programUsecase := _programUseCase.NewProgramUseCase(programRepo, fa, storage)
+	_programHandler.NewProgramHandler(programRG, programUsecase, &fa)
+	//===========================Program===========================//
 }

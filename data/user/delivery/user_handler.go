@@ -5,8 +5,8 @@ import (
 
 	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/api/middleware"
-	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -18,11 +18,11 @@ type ResponseError struct {
 
 // ArticleHandler  represent the httphandler for article
 type UserHandler struct {
-	UUsecase domain.UserUsecase
+	UUsecase user.UserUsecase
 }
 
 // NewArticleHandler will initialize the articles/ resources endpoint
-func NewUserHandler(g *gin.RouterGroup, us domain.UserUsecase, client *auth.Client) {
+func NewUserHandler(g *gin.RouterGroup, us user.UserUsecase, client *auth.Client) {
 	handler := &UserHandler{
 		UUsecase: us,
 	}
@@ -61,7 +61,6 @@ func (ur *UserHandler) SignUp(c *gin.Context) {
 	user, err := ur.UUsecase.SignUp(&requestedUser, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
-
 		return
 	}
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/VooDooStack/FitStackAPI/domain"
+	domain "github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"

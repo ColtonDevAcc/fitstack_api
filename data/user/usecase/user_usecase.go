@@ -12,18 +12,18 @@ import (
 	"firebase.google.com/go/v4/auth"
 	"firebase.google.com/go/v4/storage"
 
-	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/sirupsen/logrus"
 )
 
 type userUsecase struct {
-	userRepo domain.UserRepository
+	userRepo user.UserRepository
 	client   auth.Client
 	storage  *storage.Client
 }
 
-func NewUserUseCase(ur domain.UserRepository, client auth.Client, storage *storage.Client) domain.UserUsecase {
+func NewUserUseCase(ur user.UserRepository, client auth.Client, storage *storage.Client) user.UserUsecase {
 	return &userUsecase{userRepo: ur, client: client, storage: storage}
 }
 
@@ -38,7 +38,7 @@ func (u *userUsecase) Delete(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) GetByEmail(email string) (*domain.User, error) {
+func (u *userUsecase) GetByEmail(email string) (*user.User, error) {
 	user, err := u.userRepo.GetByEmail(email)
 	if err != nil {
 		logrus.Error(err)
@@ -49,7 +49,7 @@ func (u *userUsecase) GetByEmail(email string) (*domain.User, error) {
 	return user, nil
 }
 
-func (u *userUsecase) GetByUuid(uuid string) (*domain.User, error) {
+func (u *userUsecase) GetByUuid(uuid string) (*user.User, error) {
 	user, err := u.userRepo.GetByUuid(uuid)
 	if err != nil {
 		logrus.Error(err)
@@ -60,7 +60,7 @@ func (u *userUsecase) GetByUuid(uuid string) (*domain.User, error) {
 	return user, nil
 }
 
-func (u *userUsecase) Store(user *domain.User) error {
+func (u *userUsecase) Store(user *user.User) error {
 	err := u.userRepo.Store(user)
 	if err != nil {
 		logrus.Error(err)
@@ -82,7 +82,7 @@ func (u *userUsecase) Update(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*domain.User, error) {
+func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*user.User, error) {
 	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
 
 	err := u.userRepo.CheckUniqueFields(user)
@@ -109,17 +109,17 @@ func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*domain
 	return newUser, nil
 }
 
-func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*domain.User, error) {
+func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*user.User, error) {
 	at, err := u.client.VerifyIDToken(ctx, token)
 	if err != nil {
 		logrus.Error(err)
-		return &domain.User{}, err
+		return nil, err
 	}
 
 	user, err := u.userRepo.GetByUuid(at.UID)
 	if err != nil {
 		logrus.Error(err)
-		return &domain.User{}, err
+		return nil, err
 	}
 
 	return user, nil
@@ -174,7 +174,7 @@ func (u *userUsecase) UpdateUserAvatar(ctx context.Context, uuid string, file *m
 	return urlString, nil
 }
 
-func (u *userUsecase) GetUserProfile(uuid string) (*domain.UserProfile, error) {
+func (u *userUsecase) GetUserProfile(uuid string) (*user.UserProfile, error) {
 	profile, err := u.userRepo.GetUserProfile(uuid)
 	if err != nil {
 		logrus.Error(err)

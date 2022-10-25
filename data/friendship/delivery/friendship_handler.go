@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"firebase.google.com/go/v4/auth"
-	"github.com/VooDooStack/FitStackAPI/domain"
+	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -16,10 +16,10 @@ type ResponseError struct {
 }
 
 type FriendshipHandler struct {
-	FriendShipUsecase domain.FriendshipUsecase
+	FriendShipUsecase user.FriendshipUsecase
 }
 
-func NewFriendshipHandler(g *gin.RouterGroup, us domain.FriendshipUsecase) {
+func NewFriendshipHandler(g *gin.RouterGroup, us user.FriendshipUsecase) {
 	handler := &FriendshipHandler{
 		FriendShipUsecase: us,
 	}
@@ -31,7 +31,7 @@ func NewFriendshipHandler(g *gin.RouterGroup, us domain.FriendshipUsecase) {
 }
 
 func (f *FriendshipHandler) AddFriend(c *gin.Context) {
-	var req domain.Friendship
+	var req user.Friendship
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(400, ResponseError{Message: err.Error()})
 		return

@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/VooDooStack/FitStackAPI/domain"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	domain "github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/goccy/go-json"
 	"github.com/jackc/pgx/v5/pgxpool"
