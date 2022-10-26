@@ -26,7 +26,7 @@ func (p *programUsecase) GetByCreator(creatorId string) (*program.Program, error
 	//TODO:
 	return nil, nil
 }
-func (p *programUsecase) Get(uuid string) (*program.Program, error) {
+func (p *programUsecase) Get(uuid string) ([]*program.Program, error) {
 	program, err := p.programRepo.Get(uuid)
 	if err != nil {
 		logrus.Error(err)
