@@ -11,7 +11,7 @@ type Program struct {
 	Description string          `json:"description" db:"description"`
 	Creator     string          `json:"creator" db:"creator"`
 	RoutineID   int             `db:"routine_id"`
-	Routine     routine.Routine `json:"routine" db:"routine"`
+	Routine     routine.Routine `json:"routine" db:""`
 }
 
 type ProgramUsecase interface {

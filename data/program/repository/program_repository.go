@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/VooDooStack/FitStackAPI/domain/program"
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
@@ -27,7 +28,14 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
 
 	sqlStatement := `
 	SELECT
-	*
+    program.*,
+    routine.id as "routine.id",
+    routine.title as "routine.title",
+    routine.description as "routine.description",
+    routine.image_url as "routine.image_url",
+    workout.id as "workout.id",
+    workout.name as "workout.name"
+
     FROM programs as program
 	LEFT JOIN routines as routine
     on program.routine_id = routine.id AND program.creator = $1
@@ -37,37 +45,16 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
 
 	rows, err := u.Database.Query(context.Background(), sqlStatement, uuid)
 	if err != nil {
-		logrus.Error(fmt.Printf("error querying row err: %v", err))
-		return nil, err
+		logrus.Error(err)
+		return nil, fmt.Errorf("error querying row err: %v", err)
 	}
 
-	defer rows.Close()
-	for rows.Next() {
-		program := program.Program{}
-
-		err = rows.Scan(
-			&program.ID,
-			&program.Title,
-			&program.Description,
-			&program.Creator,
-			&program.RoutineID,
-			&program.Routine.ID,
-			&program.Routine.Title,
-			&program.Routine.Description,
-			&program.Routine.ImageUrl,
-			&program.Routine.WorkoutID,
-			&program.Routine.RoutineScheduleID,
-			&program.Routine.Workouts.ID,
-			&program.Routine.Workouts.Name,
-			&program.Routine.Schedule.ID,
-		)
-		if err != nil {
-			logrus.Error(fmt.Printf("error scanning row err: %v", err))
-			return nil, err
-		}
-
-		programs = append(programs, &program)
+	err = pgxscan.ScanAll(&programs, rows)
+	if err != nil {
+		logrus.Error(err)
+		return nil, fmt.Errorf("error scanning rows: %v", err)
 	}
+
 	return programs, nil
 }
 func (u *programRepository) GetByCreator(creatorId string) (*program.Program, error) {
