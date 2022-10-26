@@ -1,7 +1,7 @@
 package exercise
 
-import "github.com/google/uuid"
+import "gorm.io/gorm"
 
 type ExerciseEquipment struct {
-	ID uuid.UUID
+	gorm.Model
 }

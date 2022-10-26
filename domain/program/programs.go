@@ -10,8 +10,8 @@ type Program struct {
 	ID          uuid.UUID          `json:"id" db:"id"`
 	Title       string             `json:"title" db:"title"`
 	Description string             `json:"description" db:"description"`
-	Creator     *user.UserProfile  `json:"creator" db:"creator"`
-	Routine     []*routine.Routine `json:"workouts" db:"routine"`
+	Creator     *user.UserProfile  `json:"creator" db:"creator"  gorm:"foreignKey:id"`
+	Routine     []*routine.Routine `json:"workouts" db:"routine"  gorm:"foreignKey:id"`
 }
 
 type ProgramUsecase interface {

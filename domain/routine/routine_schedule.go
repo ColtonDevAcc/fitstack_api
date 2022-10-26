@@ -4,10 +4,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type RoutineSchedule struct {
-	ID        string    `json:"id"`
+	gorm.Model
 	StartDate time.Time `json:"start_date"`
 	EndDate   time.Time `json:"end_date"`
 	Monday    uuid.UUID `json:"monday"`

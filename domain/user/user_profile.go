@@ -6,10 +6,10 @@ import (
 
 type UserProfile struct {
 	Id               string           `json:"id"`
-	Challenges       []*Challenge     `json:"challenges"`
-	Achievements     []*Achievement   `json:"achievements"`
-	Statistics       []*UserStatistic `json:"user_statistics"`
-	Friends          []*UserProfile   `json:"friends"`
+	Challenges       []*Challenge     `json:"challenges" gorm:"foreignKey:id"`
+	Achievements     []*Achievement   `json:"achievements"  gorm:"foreignKey:id"`
+	Statistics       []*UserStatistic `json:"user_statistics"  gorm:"foreignKey:id"`
+	Friends          []*UserProfile   `json:"friends"  gorm:"foreignKey:id"`
 	DisplayName      string           `json:"display_name" binding:"required"`
 	FitCredit        int              `json:"fit_credits"`
 	SocialPoints     int              `json:"social_points"`

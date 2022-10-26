@@ -1,7 +1,9 @@
 package exercise
 
-import "github.com/google/uuid"
+import (
+	"gorm.io/gorm"
+)
 
 type MuscleTarget struct {
-	ID uuid.UUID
+	gorm.Model
 }

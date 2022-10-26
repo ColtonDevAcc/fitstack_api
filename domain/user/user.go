@@ -7,20 +7,22 @@ import (
 	"time"
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	Id            string     `json:"user_id"`
-	Email         string     `json:"email" binding:"required,email"`
-	FirstName     string     `json:"first_name" binding:"required"`
-	LastName      string     `json:"last_name" binding:"required"`
-	PhoneNumber   string     `json:"phone_number" binding:"required"`
-	DateOfBirth   string     `json:"date_of_birth" binding:"required"`
-	EmailVerified bool       `json:"email_verified"`
-	PhoneVerified bool       `json:"phone_verified"`
-	UpdatedAt     *time.Time `json:"updated_at"`
-	CreatedAt     *time.Time `json:"created_at"`
-	DeletedAt     *time.Time `json:"deleted_at"`
+	gorm.Model
+	Email         string       `json:"email" binding:"required,email"`
+	FirstName     string       `json:"first_name" binding:"required"`
+	LastName      string       `json:"last_name" binding:"required"`
+	PhoneNumber   string       `json:"phone_number" binding:"required"`
+	DateOfBirth   string       `json:"date_of_birth" binding:"required"`
+	EmailVerified bool         `json:"email_verified"`
+	PhoneVerified bool         `json:"phone_verified"`
+	UserProfile   *UserProfile `gorm:"foreignKey:id"`
+	UpdatedAt     *time.Time   `json:"updated_at"`
+	CreatedAt     *time.Time   `json:"created_at"`
+	DeletedAt     *time.Time   `json:"deleted_at"`
 }
 
 type UserUsecase interface {

@@ -1,6 +1,8 @@
 package exercise
 
+import "gorm.io/gorm"
+
 type WorkoutSets struct {
-	ID       int       `json:"int" db:"int"`
-	Exercise *Exercise `json:"exercise" db:"exercise"`
+	gorm.Model
+	Exercise *Exercise `json:"exercise" gorm:"foreignKey:id;references:id"`
 }

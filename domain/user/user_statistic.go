@@ -1,3 +1,5 @@
 package user
 
-type UserStatistic struct{}
+import "gorm.io/gorm"
+
+type UserStatistic struct{ gorm.Model }

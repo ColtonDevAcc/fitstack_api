@@ -1,3 +1,5 @@
 package user
 
-type Achievement struct{}
+import "gorm.io/gorm"
+
+type Achievement struct{ gorm.Model }

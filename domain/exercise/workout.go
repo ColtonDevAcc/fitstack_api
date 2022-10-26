@@ -1,8 +1,13 @@
 package exercise
 
+import (
+	"github.com/VooDooStack/FitStackAPI/domain/user"
+	"gorm.io/gorm"
+)
+
 type Workout struct {
-	ID          int            `json:"id" db:"id"`
-	Name        string         `json:"name" db:"name"`
-	Publisher   *string        `json:"publisher" db:"routine"`
-	WorkoutSets []*WorkoutSets `json:"workout_sets" db:"workout_sets"`
+	gorm.Model
+	Name        string           `json:"name"`
+	Publisher   user.UserProfile `json:"publisher" gorm:"foreignKey:id"`
+	WorkoutSets []WorkoutSets    `json:"workout_sets" gorm:"foreignKey:id"`
 }
