@@ -34,13 +34,17 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
     routine.description as "routine.description",
     routine.image_url as "routine.image_url",
     workout.id as "workout.id",
-    workout.name as "workout.name"
+    workout.name as "workout.name",
+    array_to_json(array_agg(workout_set.*)) as "workout.sets"
 
     FROM programs as program
 	LEFT JOIN routines as routine
     on program.routine_id = routine.id AND program.creator = $1
 	LEFT JOIN workouts as workout
-    on workout.id = routine.workout_id;
+    on workout.id = routine.workout_id
+    LEFT JOIN workout_sets as workout_set
+    on workout_set.workout_id = workout.id
+    GROUP BY program.id, routine.id, workout.id
 	`
 
 	rows, err := u.Database.Query(context.Background(), sqlStatement, uuid)
