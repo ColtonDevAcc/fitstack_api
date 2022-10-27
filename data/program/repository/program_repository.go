@@ -35,7 +35,7 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
     routine.image_url as "routine.image_url",
     workout.id as "workout.id",
     workout.name as "workout.name",
-    array_to_json(array_agg(workout_set.*)) as "workout.sets"
+    array_to_json(array_agg(json_build_object('workout_set.id', workout_set.id, 'workout_set.name', workout_set.name, 'exercises', json_build_array(exercise.*)))) as "workout.sets"
 
     FROM programs as program
 	LEFT JOIN routines as routine
@@ -44,6 +44,8 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
     on workout.id = routine.workout_id
     LEFT JOIN workout_sets as workout_set
     on workout_set.workout_id = workout.id
+    LEFT JOIN exercises as exercise
+    on exercise.id = workout_set.exercise_id
     GROUP BY program.id, routine.id, workout.id
 	`
 
