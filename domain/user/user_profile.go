@@ -6,9 +6,9 @@ import (
 
 type UserProfile struct {
 	Id               string           `json:"id" db:"id"`
-	Challenges       []*Challenge     `json:"challenges" db:""`
-	Achievements     []*Achievement   `json:"achievements" db:""`
-	Statistics       []*UserStatistic `json:"user_statistics" db:""`
+	Challenges       []*Challenge     `json:"challenges" db:"challenges"`
+	Achievements     []*Achievement   `json:"achievements" db:"achievements"`
+	Statistics       []*UserStatistic `json:"user_statistics" db:"statistics"`
 	Friends          []*UserProfile   `json:"friends" db:""`
 	DisplayName      string           `json:"display_name" binding:"required"`
 	FitCredit        int              `json:"fit_credits"`
