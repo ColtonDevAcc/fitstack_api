@@ -35,3 +35,23 @@ func (p *programUsecase) Get(uuid string) ([]*program.Program, error) {
 
 	return program, nil
 }
+
+func (p *programUsecase) Create(program *program.Program) error {
+	err := p.programRepo.Create(program)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func (p *programUsecase) Update(program *program.Program) error {
+	err := p.programRepo.Update(program)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	return nil
+}

@@ -6,22 +6,25 @@ import (
 )
 
 type Program struct {
-	ID          uuid.UUID       `json:"id" db:"id"`
-	Title       string          `json:"title" db:"title"`
-	Description string          `json:"description" db:"description"`
-	Creator     string          `json:"creator" db:"creator"`
-	RoutineID   int             `db:"routine_id"`
-	Routine     routine.Routine `json:"routine" db:""`
+	ID          uuid.UUID        `json:"id" db:"id"`
+	Title       string           `json:"title" db:"title"`
+	Description string           `json:"description" db:"description"`
+	Creator     string           `json:"creator" db:"creator"`
+	Routine     *routine.Routine `json:"routine" db:""`
 }
 
 type ProgramUsecase interface {
 	GetById(uuid string) (*Program, error)
 	GetByCreator(creatorId string) (*Program, error)
 	Get(uuid string) ([]*Program, error)
+	Create(program *Program) error
+	Update(program *Program) error
 }
 
 type ProgramRepository interface {
 	GetById(uuid string) (*Program, error)
 	GetByCreator(creatorId string) (*Program, error)
 	Get(uuid string) ([]*Program, error)
+	Create(program *Program) error
+	Update(program *Program) error
 }

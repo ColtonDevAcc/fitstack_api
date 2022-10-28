@@ -28,13 +28,9 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
 
 	sqlStatement := `
 	SELECT
-    program.*,
-    routine.id as "routine.id",
-    routine.title as "routine.title",
-    routine.description as "routine.description",
-    routine.image_url as "routine.image_url",
-    workout.id as "workout.id",
-    workout.name as "workout.name",
+    program.id, program.description, program.title, program.creator,
+    routine.id as "routine.id", routine.title as "routine.title", routine.description as "routine.description", routine.image_url as "routine.image_url",
+    workout.id as "workout.id", workout.name as "workout.name",
     array_to_json(array_agg(json_build_object('workout_set.id', workout_set.id, 'workout_set.name', workout_set.name, 'exercises', json_build_array(exercise.*)))) as "workout.sets"
 
     FROM programs as program
@@ -63,7 +59,30 @@ func (u *programRepository) Get(uuid string) ([]*program.Program, error) {
 
 	return programs, nil
 }
+
 func (u *programRepository) GetByCreator(creatorId string) (*program.Program, error) {
 	//TODO:
 	return nil, nil
+}
+
+func (u *programRepository) Create(program *program.Program) error {
+	sqlStatement := `
+	INSERT INTO programs (title, description, creator)
+	VALUES ($1, $2, $3)
+	`
+	u.Database.Exec(context.Background(), sqlStatement, program.Title, program.Description, program.Creator)
+
+	return nil
+}
+
+func (u *programRepository) Update(program *program.Program) error {
+	sqlStatement := `
+	UPDATE programs
+	SET title = $1, description = $2
+	WHERE id = $3
+	`
+
+	u.Database.Exec(context.Background(), sqlStatement, program.Title, program.Description, program.ID)
+
+	return nil
 }
