@@ -1,6 +1,6 @@
 package exercise
 
 type WorkoutSets struct {
-	ID       *int        `json:"id" db:"id"`
-	Exercise []*Exercise `json:"exercises" db:"exercises"`
+	ID       uint        `json:"id" gorm:"primaryKey"`
+	Exercise []*Exercise `json:"exercises" gorm:"foreignKey:ID"`
 }

@@ -1,26 +1,30 @@
 package database
 
 import (
-	"context"
 	"fmt"
-	"os"
 
 	"github.com/VooDooStack/FitStackAPI/config"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sirupsen/logrus"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-func NewDatabase(config config.Config) (*pgxpool.Pool, error) {
+func NewDatabase(config config.Config) (*gorm.DB, error) {
 	fmt.Println("Setting up database...")
 
-	db, err := pgxpool.New(context.Background(), os.Getenv("DB_URL"))
+	db, err := gorm.Open(postgres.Open(MustGetenv("DB_URL")), &gorm.Config{})
 	if err != nil {
 		fmt.Println("failed to setup database error:", err)
 		return db, err
 	}
 
+	db.Logger.LogMode(logger.Error)
+
 	err = MigrateDB(db)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
+		return nil, err
 	}
 
 	return db, nil

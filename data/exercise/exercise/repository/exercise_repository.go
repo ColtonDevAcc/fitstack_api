@@ -2,14 +2,14 @@ package repository
 
 import (
 	"github.com/VooDooStack/FitStackAPI/domain/exercise"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/gorm"
 )
 
 type exerciseRepository struct {
-	Database pgxpool.Pool
+	Database gorm.DB
 }
 
-func NewExerciseRepository(db pgxpool.Pool) exercise.ExerciseRepository {
+func NewExerciseRepository(db gorm.DB) exercise.ExerciseRepository {
 	return &exerciseRepository{Database: db}
 }
 

@@ -1,9 +1,11 @@
 package exercise
 
 type Workout struct {
-	ID          *int           `json:"id" db:"workout.id"`
-	Name        *string        `json:"name" db:"workout.name"`
-	WorkoutSets []*WorkoutSets `json:"workout_sets" db:"workout.sets"`
+	ID          uint   `json:"id" gorm:"primaryKey; unique"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	// Creator     user.User     `json:"creator" gorm:"foreignKey:ID;references:Creator"`
+	WorkoutSets []WorkoutSets `json:"workout_sets" gorm:"foreignKey:ID"`
 }
 
 type WorkoutUsecase interface {

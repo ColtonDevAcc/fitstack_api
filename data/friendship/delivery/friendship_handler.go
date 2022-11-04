@@ -37,8 +37,6 @@ func (f *FriendshipHandler) AddFriend(c *gin.Context) {
 		return
 	}
 
-	client := c.MustGet("FIREBASE_ID_TOKEN").(*auth.Token)
-	req.FromUser = client.UID
 	req.SentTime = time.Now()
 
 	err := f.FriendShipUsecase.AddFriend(&req)

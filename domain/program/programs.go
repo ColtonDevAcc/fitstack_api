@@ -1,16 +1,23 @@
 package program
 
 import (
+	"time"
+
 	"github.com/VooDooStack/FitStackAPI/domain/routine"
-	"github.com/google/uuid"
+	"github.com/VooDooStack/FitStackAPI/domain/user"
+	"gorm.io/gorm"
 )
 
 type Program struct {
-	ID          uuid.UUID        `json:"id" db:"id"`
-	Title       string           `json:"title" db:"title"`
-	Description string           `json:"description" db:"description"`
-	Creator     string           `json:"creator" db:"creator"`
-	Routine     *routine.Routine `json:"routine" db:""`
+	ID          uint             `gorm:"primaryKey;autoIncrement" json:"id"`
+	Title       string           `json:"title"`
+	Description string           `json:"description"`
+	CreatorID   uint             `json:"creator_id"`
+	Creator     *user.User       `json:"creator" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Routine     *routine.Routine `json:"routine" gorm:"foreignKey:ID"`
+	CreatedAt   time.Time        `json:"created_at"`
+	UpdatedAt   time.Time        `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt   `gorm:"index"`
 }
 
 type ProgramUsecase interface {

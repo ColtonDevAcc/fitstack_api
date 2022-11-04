@@ -4,19 +4,22 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 // this is a friendship table struct
 type Friendship struct {
-	Id           *uuid.UUID `json:"id"`
-	FromUser     string     `json:"from_user"`
-	ToUser       string     `json:"to_user" binding:"required"`
-	Accepted     bool       `json:"accepted"`
-	SentTime     time.Time  `json:"sent_time"`
-	ResponseTime *time.Time `json:"response_time"`
-	UpdatedAt    time.Time  `json:"updated_at"`
-	DeletedAt    *time.Time `json:"deleted_at"`
+	ID           uint           `json:"id" gorm:"primaryKey"`
+	FromUserID   uint           `json:"from_user_id"`
+	FromUser     User           `json:"from_user" binding:"required" gorm:"foreignKey:FromUserID"`
+	ToUserID     uint           `json:"to_user_id"`
+	ToUser       User           `json:"to_user" binding:"required" gorm:"foreignKey:ToUserID"`
+	Accepted     bool           `json:"accepted"`
+	SentTime     time.Time      `json:"sent_time"`
+	ResponseTime *time.Time     `json:"response_time"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	DeletedAt    gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
 type FriendshipUsecase interface {

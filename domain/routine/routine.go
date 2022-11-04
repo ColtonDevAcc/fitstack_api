@@ -1,12 +1,15 @@
 package routine
 
-import "github.com/VooDooStack/FitStackAPI/domain/exercise"
+import (
+	"github.com/VooDooStack/FitStackAPI/domain/exercise"
+	"gorm.io/gorm"
+)
 
 type Routine struct {
-	ID          *int               `json:"id" db:"routine.id"`
-	Title       *string            `json:"title" db:"routine.title"`
-	Description *string            `json:"description" db:"routine.description"`
-	ImageUrl    *string            `json:"image_url" db:"routine.image_url"`
-	Schedule    *RoutineSchedule   `json:"schedule" db:"routine.schedule"`
-	Workouts    []exercise.Workout `json:"workouts" db:""`
+	gorm.Model
+	Title       *string            `json:"title"`
+	Description *string            `json:"description"`
+	ImageUrl    *string            `json:"image_url"`
+	Schedule    RoutineSchedule    `json:"schedule" gorm:"foreignKey:ID"`
+	Workouts    []exercise.Workout `json:"workouts" gorm:"foreignKey:ID"`
 }

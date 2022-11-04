@@ -18,7 +18,7 @@ func NewFriendshipUsecase(fr user.FriendshipRepository, fa *auth.Client) user.Fr
 }
 
 func (f *FriendshipUsecase) AddFriend(friendship *user.Friendship) error {
-	_, err := f.client.GetUser(context.Background(), friendship.ToUser)
+	_, err := f.client.GetUser(context.Background(), friendship.ToUser.ID)
 	if err != nil {
 		logrus.Error(err)
 		return err

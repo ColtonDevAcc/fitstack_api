@@ -1,13 +1,18 @@
 package exercise
 
+import "github.com/VooDooStack/FitStackAPI/domain/user"
+
 type Exercise struct {
-	Name              string               `json:"name" db:"name"`
-	Description       string               `json:"description" db:"description"`
-	Image             *string              `json:"image" db:"image"`
-	MetValue          float32              `json:"met_value" db:"met_value"`
-	ExerciseType      []*ExerciseType      `db:""`
-	ExerciseEquipment []*ExerciseEquipment `db:""`
-	MuscleTarget      []*MuscleTarget      `db:""`
+	ID                uint                `json:"id" gorm:"primaryKey"`
+	Name              string              `json:"name"`
+	Description       string              `json:"description"`
+	Image             string              `json:"image"`
+	MetValue          float32             `json:"met_value"`
+	CreatorID         uint                `json:"creator_id"`
+	Creator           *user.User          `json:"creator" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ExerciseType      []ExerciseType      `json:"exercise_types" gorm:"foreignKey:ID"`
+	ExerciseEquipment []ExerciseEquipment `json:"exercise_equipment" gorm:"foreignKey:ID"`
+	MuscleTarget      []MuscleTarget      `json:"muscle_targets" gorm:"foreignKey:ID"`
 }
 
 type ExerciseUsecase interface {

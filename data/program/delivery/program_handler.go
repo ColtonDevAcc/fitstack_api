@@ -43,9 +43,7 @@ func (h *ProgramHandler) getPrograms(c *gin.Context) {
 }
 
 func (h *ProgramHandler) createProgram(c *gin.Context) {
-	uuid := c.GetString("uuid")
 	var program program.Program
-	program.Creator = uuid
 
 	c.Bind(&program)
 	err := h.UUsecase.Create(&program)
@@ -64,14 +62,14 @@ func (h *ProgramHandler) updateProgram(c *gin.Context) {
 	var program program.Program
 	c.Bind(&program)
 
-	if program.Creator != c.GetString("uuid") {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "unauthorized",
-			"error":   true,
-		})
+	// if program.Creator != c.GetString("uuid") {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{
+	// 		"message": "unauthorized",
+	// 		"error":   true,
+	// 	})
 
-		return
-	}
+	// 	return
+	// }
 
 	err := h.UUsecase.Update(&program)
 	if err != nil {

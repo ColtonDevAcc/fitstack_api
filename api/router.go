@@ -15,15 +15,15 @@ import (
 	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
 	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
 	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
+	"gorm.io/gorm"
 
 	_programHandler "github.com/VooDooStack/FitStackAPI/data/program/delivery"
 	_programRepo "github.com/VooDooStack/FitStackAPI/data/program/repository"
 	_programUseCase "github.com/VooDooStack/FitStackAPI/data/program/usecase"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewRouter(db *pgxpool.Pool) *gin.Engine {
+func NewRouter(db *gorm.DB) *gin.Engine {
 	client, storage, err := config.SetupFirebase()
 	if err != nil {
 		log.Fatalln("failed to init firebase auth", err)
@@ -45,7 +45,7 @@ func NewRouter(db *pgxpool.Pool) *gin.Engine {
 	return r
 }
 
-func setUpHandlers(r *gin.Engine, db *pgxpool.Pool, fa auth.Client, storage *storage.Client) {
+func setUpHandlers(r *gin.Engine, db *gorm.DB, fa auth.Client, storage *storage.Client) {
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
