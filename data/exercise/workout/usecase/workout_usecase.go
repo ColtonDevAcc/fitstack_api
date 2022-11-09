@@ -4,38 +4,27 @@ import (
 	"github.com/VooDooStack/FitStackAPI/domain/exercise"
 )
 
-type WorkoutUsecase struct {
+type workoutUsecase struct {
 	workoutRepo exercise.WorkoutRepository
 }
 
-func NewWorkoutUsecase(wr exercise.WorkoutRepository) exercise.WorkoutUsecase {
-	return &WorkoutUsecase{workoutRepo: wr}
+func NewWorkoutUseCase(wr exercise.WorkoutRepository) exercise.WorkoutUsecase {
+	return &workoutUsecase{workoutRepo: wr}
 }
 
-func (w *WorkoutUsecase) GetById(uuid string) (*exercise.Workout, error) {
-	//TODO:
-	return w.workoutRepo.SelectById(uuid)
+func (wuc *workoutUsecase) GetById(uuid string) (*exercise.Workout, error) {
+	return wuc.workoutRepo.SelectById(uuid)
+}
+func (wuc *workoutUsecase) CreateWorkout(workout *exercise.Workout) error {
+	return wuc.workoutRepo.Insert(workout)
+}
+func (wuc *workoutUsecase) GetAll(creatorId string) ([]*exercise.Workout, error) {
+	return wuc.workoutRepo.SelectAll(creatorId)
+}
+func (wuc *workoutUsecase) UpdateWorkout(workout *exercise.Workout) error {
+	return wuc.workoutRepo.Update(workout)
 }
 
-func (w *WorkoutUsecase) CreateWorkout(workout *exercise.Workout) error {
-	err := w.workoutRepo.Insert(workout)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (w *WorkoutUsecase) GetAll(userId string) ([]*exercise.Workout, error) {
-	//TODO:
-	return w.workoutRepo.SelectAll(userId)
-}
-
-func (w *WorkoutUsecase) UpdateWorkout(workout *exercise.Workout) error {
-	err := w.workoutRepo.Update(workout)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (wuc *workoutUsecase) DeleteWorkout(uuid string) error {
+	return wuc.workoutRepo.Delete(uuid)
 }

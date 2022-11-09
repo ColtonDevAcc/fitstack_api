@@ -38,6 +38,7 @@ type UserUsecase interface {
 	Store(user *User) error
 	Delete(uuid string) error
 	GetUserProfile(uuid string) (*UserProfile, error)
+	UpdateUserStatistics(userStatistic *UserStatistic) error
 }
 
 type UserRepository interface {
@@ -52,4 +53,5 @@ type UserRepository interface {
 	Delete(uuid string) error
 	CheckUniqueFields(user *dto.UserSignUp) error
 	GetUserProfile(uuid string) (*UserProfile, error)
+	UpdateUserStatistics(userStatistic *UserStatistic) error
 }

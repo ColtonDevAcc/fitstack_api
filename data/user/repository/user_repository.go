@@ -29,7 +29,7 @@ func (u *userRepository) GetByEmail(email string) (*user.User, error) {
 
 func (u *userRepository) GetByUuid(uuid string) (*user.User, error) {
 	ur := &user.User{}
-	err := u.Database.Where("id = ?", uuid).Preload("Profile").Preload("Friends").First(&ur).Error
+	err := u.Database.Where("id = ?", uuid).Preload("Profile.Statistics.HeightLog").Preload("Profile.Statistics.BodyFatLog").Preload("Profile.Statistics.BMILog").Preload("Profile.Statistics.WeightLog").Preload("Friends").First(&ur).Error
 	return ur, err
 }
 
@@ -75,4 +75,12 @@ func (u *userRepository) GetUserProfile(uuid string) (*user.UserProfile, error) 
 	//TODO:
 
 	return nil, nil
+}
+
+func (u *userRepository) UpdateUserProfile(uuid string, profile *user.UserProfile) error {
+	return u.Database.Model(&user.UserProfile{}).Where("id = ?", uuid).Updates(profile).Error
+}
+
+func (u *userRepository) UpdateUserStatistics(userStatistic *user.UserStatistic) error {
+	return u.Database.Model(&user.UserStatistic{}).Where("id = ?", userStatistic.ID).Save(userStatistic).Error
 }

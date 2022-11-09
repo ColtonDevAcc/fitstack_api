@@ -35,6 +35,7 @@ func NewUserHandler(g *gin.RouterGroup, us user.UserUsecase, client *auth.Client
 	g.POST("/update-avatar", middleware.AuthJWT(client), handler.UpdateUserAvatar)
 	g.GET("/fetch-profile", handler.fetchUserProfile)
 	g.GET("/profile", middleware.AuthJWT(client), handler.getUserProfile)
+	g.POST("/update-statistics", middleware.AuthJWT(client), handler.UpdateUserStatistics)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -195,4 +196,25 @@ func (ur *UserHandler) getUserProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, profile)
+}
+
+func (ur *UserHandler) UpdateUserStatistics(c *gin.Context) {
+	uuid := c.GetString("uuid")
+	statistics := user.UserStatistic{}
+	err := c.ShouldBindJSON(&statistics)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	statistics.ID = uuid
+	err = ur.UUsecase.UpdateUserStatistics(&statistics)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
 }

@@ -9,18 +9,20 @@ import (
 	"firebase.google.com/go/v4/storage"
 	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/config"
+	_workoutHandler "github.com/VooDooStack/FitStackAPI/data/exercise/workout/delivery"
+	_workoutRepo "github.com/VooDooStack/FitStackAPI/data/exercise/workout/repository"
+	_workoutUseCase "github.com/VooDooStack/FitStackAPI/data/exercise/workout/usecase"
 	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
 	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
 	_friendshipUsecase "github.com/VooDooStack/FitStackAPI/data/friendship/usecase"
-	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
-	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
-	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
-	"gorm.io/gorm"
-
 	_programHandler "github.com/VooDooStack/FitStackAPI/data/program/delivery"
 	_programRepo "github.com/VooDooStack/FitStackAPI/data/program/repository"
 	_programUseCase "github.com/VooDooStack/FitStackAPI/data/program/usecase"
+	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
+	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
+	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func NewRouter(db *gorm.DB) *gin.Engine {
@@ -74,4 +76,12 @@ func setUpHandlers(r *gin.Engine, db *gorm.DB, fa auth.Client, storage *storage.
 	programUsecase := _programUseCase.NewProgramUseCase(programRepo, fa, storage)
 	_programHandler.NewProgramHandler(programRG, programUsecase, &fa)
 	//===========================Program===========================//
+
+	//===========================Workout===========================//
+	workoutRG := r.Group("/workout")
+	workoutRG.Use(middleware.AuthJWT(&fa))
+	workoutRepo := _workoutRepo.NewWorkoutRepository(*db)
+	workoutUsecase := _workoutUseCase.NewWorkoutUseCase(workoutRepo)
+	_workoutHandler.NewWorkoutHandler(workoutRG, workoutUsecase, &fa)
+	//===========================Workout===========================//
 }

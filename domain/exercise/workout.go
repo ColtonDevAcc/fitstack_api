@@ -1,18 +1,22 @@
 package exercise
 
+import "github.com/VooDooStack/FitStackAPI/domain/user"
+
 type Workout struct {
-	ID          uint   `json:"id" gorm:"primaryKey; unique"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	// Creator     user.User     `json:"creator" gorm:"foreignKey:ID;references:Creator"`
+	ID          uint          `json:"id" gorm:"primaryKey; unique"`
+	Title       string        `json:"title"`
+	Description string        `json:"description"`
+	CreatorId   string        `json:"creator_id"`
+	Creator     *user.User    `json:"creator" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	WorkoutSets []WorkoutSets `json:"workout_sets" gorm:"foreignKey:ID"`
 }
 
 type WorkoutUsecase interface {
 	GetById(uuid string) (*Workout, error)
-	CreateWorkout(*Workout) error
+	CreateWorkout(workout *Workout) error
 	GetAll(userId string) ([]*Workout, error)
-	UpdateWorkout(*Workout) error
+	UpdateWorkout(workout *Workout) error
+	DeleteWorkout(uuid string) error
 }
 
 type WorkoutRepository interface {
@@ -20,4 +24,5 @@ type WorkoutRepository interface {
 	SelectAll(userId string) ([]*Workout, error)
 	Insert(workout *Workout) error
 	Update(workout *Workout) error
+	Delete(uuid string) error
 }

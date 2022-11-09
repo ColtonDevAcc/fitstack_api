@@ -26,6 +26,7 @@ func NewProgramHandler(g *gin.RouterGroup, puc program.ProgramUsecase, client *a
 	g.GET("/get", handler.getPrograms)
 	g.POST("/create", handler.createProgram)
 	g.POST("/update", handler.updateProgram)
+	g.DELETE("/delete", handler.deleteProgram)
 }
 
 func (h *ProgramHandler) getPrograms(c *gin.Context) {
@@ -44,9 +45,10 @@ func (h *ProgramHandler) getPrograms(c *gin.Context) {
 
 func (h *ProgramHandler) createProgram(c *gin.Context) {
 	var program program.Program
+	client := c.MustGet("FIREBASE_ID_TOKEN").(*auth.Token)
+	program.CreatorID = client.UID
 
-	c.Bind(&program)
-	err := h.UUsecase.Create(&program)
+	err := c.Bind(&program)
 	if err != nil {
 		logrus.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -55,23 +57,51 @@ func (h *ProgramHandler) createProgram(c *gin.Context) {
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	err = h.UUsecase.Create(&program)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+
+	c.JSON(http.StatusOK, program)
 }
 
 func (h *ProgramHandler) updateProgram(c *gin.Context) {
 	var program program.Program
 	c.Bind(&program)
-
-	// if program.Creator != c.GetString("uuid") {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{
-	// 		"message": "unauthorized",
-	// 		"error":   true,
-	// 	})
-
-	// 	return
-	// }
+	program.CreatorID = c.GetString("uuid")
 
 	err := h.UUsecase.Update(&program)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (h *ProgramHandler) deleteProgram(c *gin.Context) {
+	type DeleteProgram struct {
+		Id uint `json:"id"`
+	}
+	var deleteProgram DeleteProgram
+
+	err := c.Bind(&deleteProgram)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+
+	err = h.UUsecase.Delete(deleteProgram.Id, c.GetString("uuid"))
 	if err != nil {
 		logrus.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{

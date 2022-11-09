@@ -8,7 +8,7 @@ type Exercise struct {
 	Description       string              `json:"description"`
 	Image             string              `json:"image"`
 	MetValue          float32             `json:"met_value"`
-	CreatorID         uint                `json:"creator_id"`
+	CreatorID         string              `json:"creator_id"`
 	Creator           *user.User          `json:"creator" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	ExerciseType      []ExerciseType      `json:"exercise_types" gorm:"foreignKey:ID"`
 	ExerciseEquipment []ExerciseEquipment `json:"exercise_equipment" gorm:"foreignKey:ID"`

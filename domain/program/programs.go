@@ -9,10 +9,10 @@ import (
 )
 
 type Program struct {
-	ID          uint             `gorm:"primaryKey;autoIncrement" json:"id"`
+	ID          uint             `json:"id" gorm:"primaryKey;autoIncrement"`
 	Title       string           `json:"title"`
 	Description string           `json:"description"`
-	CreatorID   uint             `json:"creator_id"`
+	CreatorID   string           `json:"creator_id"`
 	Creator     *user.User       `json:"creator" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Routine     *routine.Routine `json:"routine" gorm:"foreignKey:ID"`
 	CreatedAt   time.Time        `json:"created_at"`
@@ -26,6 +26,7 @@ type ProgramUsecase interface {
 	Get(uuid string) ([]*Program, error)
 	Create(program *Program) error
 	Update(program *Program) error
+	Delete(id uint, creatorId string) error
 }
 
 type ProgramRepository interface {
@@ -34,4 +35,5 @@ type ProgramRepository interface {
 	Get(uuid string) ([]*Program, error)
 	Create(program *Program) error
 	Update(program *Program) error
+	Delete(id uint, creatorId string) error
 }

@@ -183,3 +183,13 @@ func (u *userUsecase) GetUserProfile(uuid string) (*user.UserProfile, error) {
 
 	return profile, nil
 }
+
+func (u *userUsecase) UpdateUserStatistics(userStatistics *user.UserStatistic) error {
+	err := u.userRepo.UpdateUserStatistics(userStatistics)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	return nil
+}
