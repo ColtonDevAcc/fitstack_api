@@ -35,7 +35,8 @@ func NewUserHandler(g *gin.RouterGroup, us user.UserUsecase, client *auth.Client
 	g.POST("/update-avatar", middleware.AuthJWT(client), handler.UpdateUserAvatar)
 	g.GET("/fetch-profile", handler.fetchUserProfile)
 	g.GET("/profile", middleware.AuthJWT(client), handler.getUserProfile)
-	g.POST("/update-statistics", middleware.AuthJWT(client), handler.UpdateUserStatistics)
+	g.POST("/statistics", middleware.AuthJWT(client), handler.UpdateUserStatistics)
+	g.GET("/statistics", middleware.AuthJWT(client), handler.GetUserStatistics)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -208,7 +209,23 @@ func (ur *UserHandler) UpdateUserStatistics(c *gin.Context) {
 		return
 	}
 
+	for i := range statistics.HeightLogs {
+		statistics.HeightLogs[i].UserStatisticID = uuid
+	}
+
+	for i := range statistics.WeightLogs {
+		statistics.WeightLogs[i].UserStatisticID = uuid
+	}
+
+	for i := range statistics.BodyFatLogs {
+		statistics.BodyFatLogs[i].UserStatisticID = uuid
+	}
+
+	for i := range statistics.BMILogs {
+		statistics.BMILogs[i].UserStatisticID = uuid
+	}
 	statistics.ID = uuid
+
 	err = ur.UUsecase.UpdateUserStatistics(&statistics)
 	if err != nil {
 		logrus.Error(err)
@@ -217,4 +234,17 @@ func (ur *UserHandler) UpdateUserStatistics(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, nil)
+}
+
+func (ur *UserHandler) GetUserStatistics(c *gin.Context) {
+	uuid := c.GetString("uuid")
+
+	statistics, err := ur.UUsecase.GetUserStatistics(uuid)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, statistics)
 }

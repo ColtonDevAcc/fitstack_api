@@ -22,6 +22,8 @@ type User struct {
 	UpdatedAt     time.Time      `json:"updated_at" gorm:"autoUpdateTime:true"`
 	CreatedAt     time.Time      `json:"created_at"`
 	DeletedAt     gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	WeightGoal    float64        `json:"weight_goal" binding:"required"`
+	BMIGoal       float64        `json:"bmi_goal" binding:"required"`
 	Profile       UserProfile    `json:"profile" gorm:"foreignKey:ID;References:ID"`
 	Friends       []Friendship   `json:"friends" gorm:"many2many:user_friends;"`
 }
@@ -39,6 +41,7 @@ type UserUsecase interface {
 	Delete(uuid string) error
 	GetUserProfile(uuid string) (*UserProfile, error)
 	UpdateUserStatistics(userStatistic *UserStatistic) error
+	GetUserStatistics(uuid string) (*UserStatistic, error)
 }
 
 type UserRepository interface {
@@ -54,4 +57,5 @@ type UserRepository interface {
 	CheckUniqueFields(user *dto.UserSignUp) error
 	GetUserProfile(uuid string) (*UserProfile, error)
 	UpdateUserStatistics(userStatistic *UserStatistic) error
+	GetUserStatistics(uuid string) (*UserStatistic, error)
 }
