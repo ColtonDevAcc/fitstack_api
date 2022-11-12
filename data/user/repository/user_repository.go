@@ -90,7 +90,7 @@ func (u *userRepository) UpdateUserProfile(uuid string, profile *user.UserProfil
 }
 
 func (u *userRepository) UpdateUserStatistics(userStatistic *user.UserStatistic) error {
-	err := u.Database.Model(&user.HeightLog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.HeightLogs).Error
+	err := u.Database.Model(&user.UserStatistic{}).Where("id = ?", userStatistic.ID).Updates(userStatistic).Error
 	if err != nil {
 		return err
 	}
