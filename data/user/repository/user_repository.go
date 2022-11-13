@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"gorm.io/gorm"
@@ -75,8 +77,8 @@ func (u *userRepository) CheckUniqueFields(user *dto.UserSignUp) error {
 }
 
 func (u *userRepository) UpdateUserAvatar(uuid string, fileURL string) error {
-	//TODO:
-	return nil
+	err := u.Database.Model(&user.UserProfile{}).Where("id = ?", uuid).Update("avatar", fileURL).Error
+	return err
 }
 
 func (u *userRepository) GetUserProfile(uuid string) (*user.UserProfile, error) {
@@ -95,19 +97,25 @@ func (u *userRepository) UpdateUserStatistics(userStatistic *user.UserStatistic)
 		return err
 	}
 
-	err = u.Database.Model(&user.WeightLog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.WeightLogs).Error
-	if err != nil {
-		return err
+	if userStatistic.WeightLogs != nil && len(userStatistic.WeightLogs) > 0 {
+		err = u.Database.Model(&user.WeightLog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.WeightLogs).Error
+		if err != nil {
+			return err
+		}
 	}
 
-	err = u.Database.Model(&user.BMILog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.BMILogs).Error
-	if err != nil {
-		return err
+	if userStatistic.BMILogs != nil && len(userStatistic.BMILogs) > 0 {
+		err = u.Database.Model(&user.BMILog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.BMILogs).Error
+		if err != nil {
+			return err
+		}
 	}
 
-	err = u.Database.Model(&user.BodyFatLog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.BodyFatLogs).Error
-	if err != nil {
-		return err
+	if userStatistic.BodyFatLogs != nil && len(userStatistic.BodyFatLogs) > 0 {
+		err = u.Database.Model(&user.BodyFatLog{}).Where("user_statistic_id = ?", &userStatistic.ID).Create(&userStatistic.BodyFatLogs).Error
+		if err != nil {
+			return err
+		}
 	}
 
 	return err
@@ -116,14 +124,50 @@ func (u *userRepository) UpdateUserStatistics(userStatistic *user.UserStatistic)
 func (u *userRepository) GetUserStatistics(uuid string) (*user.UserStatistic, error) {
 	us := user.UserStatistic{}
 	err := u.Database.Where("id = ?", uuid).Preload("HeightLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc")
+		return tx.Order("created_at desc").Limit(1)
 	}).Preload("WeightLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc")
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
 	}).Preload("BMILogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc")
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
 	}).Preload("BodyFatLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc")
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("StepLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("DistanceLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("ActiveMinutesLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("HeartRateLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("SleepLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("BloodPressureLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("BodyTemperatureLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("RespiratoryRateLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("OxygenSaturationLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("ActiveEnergyLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
+	}).Preload("BasalEnergyLog", func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("created_at desc")
 	}).First(&us).Error
 
 	return &us, err
 }
+
+//	HeightLogs       []HeightLog           `json:"height_log" gorm:"foreignKey:UserStatisticID"`
+// 	WeightLogs       []WeightLog           `json:"weight_log" gorm:"foreignKey:UserStatisticID"`
+// 	BMILogs          []BMILog              `json:"bmi_log" gorm:"foreignKey:UserStatisticID"`
+// 	BodyFatLogs      []BodyFatLog          `json:"body_fat_log" gorm:"foreignKey:UserStatisticID"`
+// 	StepLogs         []StepsLog            `json:"step_log" gorm:"foreignKey:UserStatisticID"`
+// 	DistanceLog      []DistanceLog         `json:"distance_log" gorm:"foreignKey:UserStatisticID"`
+// 	ActiveMinutesLog []ActiveMinutesLog    `json:"active_minutes_log" gorm:"foreignKey:UserStatisticID"`
+// 	HeartRateLog     []HeartRateLog        `json:"heart_rate_log" gorm:"foreignKey:UserStatisticID"`
+// 	SleepLog         []SleepLog            `json:"sleep_log" gorm:"foreignKey:UserStatisticID"`
+// 	BloodPressureLog []BloodPressureLog    `json:"blood_pressure_log" gorm:"foreignKey:UserStatisticID"`
+// 	BodyTemperature  []TemperatureLog      `json:"body_temperature" gorm:"foreignKey:UserStatisticID"`
+// 	RespiratoryRate  []RespiratoryLog      `json:"respiratory_rate" gorm:"foreignKey:UserStatisticID"`
+// 	OxygenSaturation []OxygenSaturationLog `json:"oxygen_saturation" gorm:"foreignKey:UserStatisticID"`

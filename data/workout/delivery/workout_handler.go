@@ -44,7 +44,7 @@ func (wr *WorkoutHandler) getWorkouts(c *gin.Context) {
 
 func (wr *WorkoutHandler) createWorkout(c *gin.Context) {
 	workout := exercise.Workout{}
-	workout.CreatorId = c.GetString("uuid")
+	workout.CreatorID = c.GetString("uuid")
 
 	err := c.ShouldBindJSON(&workout)
 	if err != nil {

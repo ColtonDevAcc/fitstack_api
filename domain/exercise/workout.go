@@ -6,7 +6,7 @@ type Workout struct {
 	ID          uint          `json:"id" gorm:"primaryKey; unique"`
 	Title       string        `json:"title"`
 	Description string        `json:"description"`
-	CreatorId   string        `json:"creator_id"`
+	CreatorID   string        `json:"creator_id"`
 	Creator     *user.User    `json:"creator" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	WorkoutSets []WorkoutSets `json:"workout_sets" gorm:"foreignKey:ID"`
 }
