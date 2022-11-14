@@ -22,8 +22,8 @@ type User struct {
 	UpdatedAt     time.Time      `json:"updated_at" gorm:"autoUpdateTime:true"`
 	CreatedAt     time.Time      `json:"created_at"`
 	DeletedAt     gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-	WeightGoal    float64        `json:"weight_goal" binding:"required"`
-	BMIGoal       float64        `json:"bmi_goal" binding:"required"`
+	WeightGoal    float64        `json:"weight_goal"`
+	BMIGoal       float64        `json:"bmi_goal"`
 	Profile       UserProfile    `json:"profile" gorm:"foreignKey:ID;References:ID"`
 	Friends       []Friendship   `json:"friends" gorm:"many2many:user_friends;"`
 }
