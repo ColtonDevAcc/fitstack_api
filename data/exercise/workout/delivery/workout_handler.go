@@ -29,6 +29,7 @@ func NewWorkoutHandler(g *gin.RouterGroup, wu exercise.WorkoutUsecase, client *a
 	g.GET("/get-workout", handler.getWorkout)
 	g.POST("/update", handler.updateWorkout)
 	g.POST("/delete", handler.deleteWorkout)
+	g.GET("/exercises", handler.getWorkoutExercises)
 }
 
 func (wr *WorkoutHandler) getWorkouts(c *gin.Context) {
@@ -99,7 +100,14 @@ func (wr *WorkoutHandler) updateWorkout(c *gin.Context) {
 }
 
 func (wr *WorkoutHandler) deleteWorkout(c *gin.Context) {
-	err := wr.UUsecase.DeleteWorkout(c.Param("id"))
+	var workout exercise.Workout
+	err := c.BindJSON(&workout)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: err.Error()})
+		return
+	}
+
+	err = wr.UUsecase.DeleteWorkout(&workout)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 
@@ -107,4 +115,22 @@ func (wr *WorkoutHandler) deleteWorkout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Workout deleted"})
+}
+
+func (wr *WorkoutHandler) getWorkoutExercises(c *gin.Context) {
+	workout := exercise.Workout{}
+	err := c.BindJSON(&workout)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: err.Error()})
+		return
+	}
+
+	workoutSets, err := wr.UUsecase.GetWorkoutSets(workout.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, workoutSets)
 }

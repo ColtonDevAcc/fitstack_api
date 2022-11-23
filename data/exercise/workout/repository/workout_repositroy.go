@@ -33,6 +33,19 @@ func (wr *workoutRepository) Update(workout *exercise.Workout) error {
 	return wr.Database.Save(workout).Error
 }
 
-func (wr *workoutRepository) Delete(uuid string) error {
-	return wr.Database.Where("uuid = ?", uuid).Delete(&exercise.Workout{}).Error
+func (wr *workoutRepository) Delete(workout *exercise.Workout) error {
+	return wr.Database.Where("id = ?", workout.ID).Delete(&exercise.Workout{}).Error
+}
+
+func (wr *workoutRepository) FetchWorkoutSets(id uint) (*[]exercise.WorkoutSets, error) {
+	workoutSets := []exercise.WorkoutSets{}
+	workout := &exercise.Workout{}
+	err := wr.Database.Model(exercise.Workout{}).Where("id = ?", id).Preload("WorkoutSets.Exercises").First(&workout).Error
+	if err != nil {
+		return nil, err
+	}
+
+	workoutSets = workout.WorkoutSets
+
+	return &workoutSets, nil
 }

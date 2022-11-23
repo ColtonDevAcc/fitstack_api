@@ -35,7 +35,6 @@ func MigrateDB(db *gorm.DB) error {
 		&user.Challenge{},
 		&user.Friendship{},
 		&exercise.ExerciseEquipment{},
-		&exercise.ExerciseType{},
 		&exercise.MuscleTarget{},
 		&exercise.Exercise{},
 		&exercise.WorkoutSets{},

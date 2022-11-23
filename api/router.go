@@ -12,6 +12,11 @@ import (
 	_workoutHandler "github.com/VooDooStack/FitStackAPI/data/exercise/workout/delivery"
 	_workoutRepo "github.com/VooDooStack/FitStackAPI/data/exercise/workout/repository"
 	_workoutUseCase "github.com/VooDooStack/FitStackAPI/data/exercise/workout/usecase"
+
+	_exerciseHandler "github.com/VooDooStack/FitStackAPI/data/exercise/exercise/delivery"
+	_exerciseRepo "github.com/VooDooStack/FitStackAPI/data/exercise/exercise/repository"
+	_exerciseUseCase "github.com/VooDooStack/FitStackAPI/data/exercise/exercise/usecase"
+
 	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
 	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
 	_friendshipUsecase "github.com/VooDooStack/FitStackAPI/data/friendship/usecase"
@@ -84,4 +89,12 @@ func setUpHandlers(r *gin.Engine, db *gorm.DB, fa auth.Client, storage *storage.
 	workoutUsecase := _workoutUseCase.NewWorkoutUseCase(workoutRepo)
 	_workoutHandler.NewWorkoutHandler(workoutRG, workoutUsecase, &fa)
 	//===========================Workout===========================//
+
+	//===========================Exercise===========================//
+	exerciseRG := r.Group("/exercise")
+	exerciseRG.Use(middleware.AuthJWT(&fa))
+	exerciseRepo := _exerciseRepo.NewExerciseRepository(*db)
+	exerciseUsecase := _exerciseUseCase.NewExerciseUsecase(exerciseRepo)
+	_exerciseHandler.NewExerciseHandler(exerciseRG, exerciseUsecase)
+	//===========================Exercise===========================//
 }

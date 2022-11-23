@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.8.1
-	github.com/google/uuid v1.3.0
 	google.golang.org/api v0.87.0
 	google.golang.org/genproto v0.0.0-20220715211116-798f69b842b9
 	gorm.io/gorm v1.24.1-0.20221019064659-5dd2bb482755
@@ -24,6 +23,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.4.0 // indirect
 	github.com/googleapis/go-type-adapters v1.0.0 // indirect
@@ -60,6 +60,7 @@ require (
 
 require (
 	cloud.google.com/go/secretmanager v1.5.0
+	firebase.google.com/go v3.13.0+incompatible
 	firebase.google.com/go/v4 v4.8.0
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.7 // indirect

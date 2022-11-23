@@ -25,6 +25,10 @@ func (wuc *workoutUsecase) UpdateWorkout(workout *exercise.Workout) error {
 	return wuc.workoutRepo.Update(workout)
 }
 
-func (wuc *workoutUsecase) DeleteWorkout(uuid string) error {
-	return wuc.workoutRepo.Delete(uuid)
+func (wuc *workoutUsecase) DeleteWorkout(workout *exercise.Workout) error {
+	return wuc.workoutRepo.Delete(workout)
+}
+
+func (wuc *workoutUsecase) GetWorkoutSets(id uint) (*[]exercise.WorkoutSets, error) {
+	return wuc.workoutRepo.FetchWorkoutSets(id)
 }

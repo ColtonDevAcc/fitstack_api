@@ -16,7 +16,8 @@ type WorkoutUsecase interface {
 	CreateWorkout(workout *Workout) error
 	GetAll(userId string) ([]*Workout, error)
 	UpdateWorkout(workout *Workout) error
-	DeleteWorkout(uuid string) error
+	DeleteWorkout(workout *Workout) error
+	GetWorkoutSets(id uint) (*[]WorkoutSets, error)
 }
 
 type WorkoutRepository interface {
@@ -24,5 +25,6 @@ type WorkoutRepository interface {
 	SelectAll(userId string) ([]*Workout, error)
 	Insert(workout *Workout) error
 	Update(workout *Workout) error
-	Delete(uuid string) error
+	Delete(Workout *Workout) error
+	FetchWorkoutSets(id uint) (*[]WorkoutSets, error)
 }
