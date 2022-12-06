@@ -203,3 +203,13 @@ func (u *userUsecase) GetUserStatistics(uuid string) (*user.UserStatistic, error
 
 	return userStatistics, nil
 }
+
+func (u *userUsecase) GetUserStatisticsSnapshot(uuid string) (*user.UserStatistic, error) {
+	userStatisticsSnapshot, err := u.userRepo.GetUserStatisticsSnapshot(uuid)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return userStatisticsSnapshot, nil
+}

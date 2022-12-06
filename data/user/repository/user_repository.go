@@ -158,16 +158,29 @@ func (u *userRepository) GetUserStatistics(uuid string) (*user.UserStatistic, er
 	return &us, err
 }
 
-//	HeightLogs       []HeightLog           `json:"height_log" gorm:"foreignKey:UserStatisticID"`
-// 	WeightLogs       []WeightLog           `json:"weight_log" gorm:"foreignKey:UserStatisticID"`
-// 	BMILogs          []BMILog              `json:"bmi_log" gorm:"foreignKey:UserStatisticID"`
-// 	BodyFatLogs      []BodyFatLog          `json:"body_fat_log" gorm:"foreignKey:UserStatisticID"`
-// 	StepLogs         []StepsLog            `json:"step_log" gorm:"foreignKey:UserStatisticID"`
-// 	DistanceLog      []DistanceLog         `json:"distance_log" gorm:"foreignKey:UserStatisticID"`
-// 	ActiveMinutesLog []ActiveMinutesLog    `json:"active_minutes_log" gorm:"foreignKey:UserStatisticID"`
-// 	HeartRateLog     []HeartRateLog        `json:"heart_rate_log" gorm:"foreignKey:UserStatisticID"`
-// 	SleepLog         []SleepLog            `json:"sleep_log" gorm:"foreignKey:UserStatisticID"`
-// 	BloodPressureLog []BloodPressureLog    `json:"blood_pressure_log" gorm:"foreignKey:UserStatisticID"`
-// 	BodyTemperature  []TemperatureLog      `json:"body_temperature" gorm:"foreignKey:UserStatisticID"`
-// 	RespiratoryRate  []RespiratoryLog      `json:"respiratory_rate" gorm:"foreignKey:UserStatisticID"`
-// 	OxygenSaturation []OxygenSaturationLog `json:"oxygen_saturation" gorm:"foreignKey:UserStatisticID"`
+func (u *userRepository) GetUserStatisticsSnapshot(uuid string) (*user.UserStatistic, error) {
+	us := user.UserStatistic{}
+	err := u.Database.Where("id = ?", uuid).Preload("HeightLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("WeightLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("BMILogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("BodyFatLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("StepLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("DistanceLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("ActiveMinutesLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("SleepLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("ActiveEnergyLogs", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).Preload("BasalEnergyLog", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at desc").Limit(1)
+	}).First(&us).Error
+
+	return &us, err
+}

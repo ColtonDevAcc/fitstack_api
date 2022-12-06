@@ -42,6 +42,7 @@ type UserUsecase interface {
 	GetUserProfile(uuid string) (*UserProfile, error)
 	UpdateUserStatistics(userStatistic *UserStatistic) error
 	GetUserStatistics(uuid string) (*UserStatistic, error)
+	GetUserStatisticsSnapshot(uuid string) (*UserStatistic, error)
 }
 
 type UserRepository interface {
@@ -58,4 +59,5 @@ type UserRepository interface {
 	GetUserProfile(uuid string) (*UserProfile, error)
 	UpdateUserStatistics(userStatistic *UserStatistic) error
 	GetUserStatistics(uuid string) (*UserStatistic, error)
+	GetUserStatisticsSnapshot(uuid string) (*UserStatistic, error)
 }
