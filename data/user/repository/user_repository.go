@@ -163,24 +163,32 @@ func (u *userRepository) GetUserStatisticsSnapshot(uuid string) (*user.UserStati
 	err := u.Database.Where("id = ?", uuid).Preload("HeightLogs", func(tx *gorm.DB) *gorm.DB {
 		return tx.Order("created_at desc").Limit(1)
 	}).Preload("WeightLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("BMILogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("BodyFatLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("StepLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("DistanceLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("ActiveMinutesLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("SleepLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("ActiveEnergyLogs", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).Preload("BasalEnergyLog", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at desc").Limit(1)
+		// get 1 record per day for the past month
+		return tx.Select("DISTINCT ON (date_trunc('day', created_at)) *").Where("created_at > ?", time.Now().AddDate(0, -1, 0)).Order("date_trunc('day', created_at), created_at desc")
 	}).First(&us).Error
-
 	return &us, err
 }
