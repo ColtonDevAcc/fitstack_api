@@ -1,11 +1,13 @@
 package delivery
 
 import (
+	"fmt"
 	"net/http"
 
 	"firebase.google.com/go/v4/auth"
 	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
 	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -38,6 +40,7 @@ func NewUserHandler(g *gin.RouterGroup, us user.UserUsecase, client *auth.Client
 	g.POST("/statistics", middleware.AuthJWT(client), handler.UpdateUserStatistics)
 	g.GET("/statistics", middleware.AuthJWT(client), handler.GetUserStatistics)
 	g.GET("/statistics/snapshot", middleware.AuthJWT(client), handler.GetUserStatisticsSnapshot)
+	g.POST("/statistic", middleware.AuthJWT(client), handler.GetUserHealthLog)
 }
 
 func (ur *UserHandler) FetchUser(c *gin.Context) {
@@ -210,20 +213,28 @@ func (ur *UserHandler) UpdateUserStatistics(c *gin.Context) {
 		return
 	}
 
-	for i := range statistics.HeightLogs {
-		statistics.HeightLogs[i].UserStatisticID = uuid
-	}
-
 	for i := range statistics.WeightLogs {
 		statistics.WeightLogs[i].UserStatisticID = uuid
 	}
 
-	for i := range statistics.BodyFatLogs {
-		statistics.BodyFatLogs[i].UserStatisticID = uuid
+	for i := range statistics.BodyFatPercentageLogs {
+		statistics.BodyFatPercentageLogs[i].UserStatisticID = uuid
 	}
 
-	for i := range statistics.BMILogs {
-		statistics.BMILogs[i].UserStatisticID = uuid
+	for i := range statistics.BodyMassIndexLogs {
+		statistics.BodyMassIndexLogs[i].UserStatisticID = uuid
+	}
+
+	for i := range statistics.ActiveEnergyBurnedLogs {
+		statistics.ActiveEnergyBurnedLogs[i].UserStatisticID = uuid
+	}
+
+	for i := range statistics.SleepAsleepLogs {
+		statistics.SleepAsleepLogs[i].UserStatisticID = uuid
+	}
+
+	for i := range statistics.StepsLogs {
+		statistics.StepsLogs[i].UserStatisticID = uuid
 	}
 	statistics.ID = uuid
 
@@ -233,6 +244,8 @@ func (ur *UserHandler) UpdateUserStatistics(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 		return
 	}
+
+	fmt.Println(statistics)
 
 	c.JSON(http.StatusOK, nil)
 }
@@ -254,6 +267,30 @@ func (ur *UserHandler) GetUserStatisticsSnapshot(c *gin.Context) {
 	uuid := c.GetString("uuid")
 
 	statistics, err := ur.UUsecase.GetUserStatisticsSnapshot(uuid)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, statistics)
+}
+
+func (ur *UserHandler) GetUserHealthLog(c *gin.Context) {
+	type healthType struct {
+		HealthType healthLogs.HealthDataType `json:"health_type"`
+	}
+
+	dataType := healthType{}
+	err := c.ShouldBindJSON(&dataType)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
+		return
+	}
+	uuid := c.GetString("uuid")
+
+	statistics, err := ur.UUsecase.GetUserHealthLog(uuid, dataType.HealthType)
 	if err != nil {
 		logrus.Error(err)
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})

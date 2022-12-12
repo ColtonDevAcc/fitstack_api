@@ -4,6 +4,7 @@
     "cloudsql",
     "dbname",
     "dgrijalva",
+    "ELECTRODERMAL",
     "fmodel",
     "forbsey",
     "gcloud",
@@ -17,6 +18,7 @@
     "pgxpool",
     "pgxscan",
     "scany",
+    "SDNN",
     "sirupsen"
   ]
 }

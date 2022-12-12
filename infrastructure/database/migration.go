@@ -2,9 +2,11 @@ package database
 
 import (
 	"github.com/VooDooStack/FitStackAPI/domain/exercise"
+	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
 	"github.com/VooDooStack/FitStackAPI/domain/program"
 	"github.com/VooDooStack/FitStackAPI/domain/routine"
 	"github.com/VooDooStack/FitStackAPI/domain/user"
+
 	"gorm.io/gorm"
 )
 
@@ -15,22 +17,17 @@ func MigrateDB(db *gorm.DB) error {
 		&user.User{},
 		&user.UserProfile{},
 		&user.UserStatistic{},
-		&user.BodyFatLog{},
-		&user.BMILog{},
-		&user.HeightLog{},
-		&user.WeightLog{},
-		&user.StepsLog{},
-		&user.DistanceLog{},
-		&user.ActiveEnergyLog{},
-		&user.BasalEnergyLog{},
-		&user.HeartRateLog{},
-		&user.SleepLog{},
-		&user.BloodPressureLog{},
-		&user.TemperatureLog{},
-		&user.OxygenSaturationLog{},
-		&user.BloodGlucoseLog{},
-		&user.RespiratoryLog{},
-		&user.ActiveMinutesLog{},
+		&healthLogs.BodyFatPercentageLog{},
+		&healthLogs.BodyMassIndexLog{},
+		&healthLogs.WeightLog{},
+		&healthLogs.HeightLog{},
+		&healthLogs.StepsLog{},
+		&healthLogs.ActiveEnergyBurnedLog{},
+		&healthLogs.BasalEnergyBurnedLog{},
+		&healthLogs.HeartRateLog{},
+		&healthLogs.SleepAsleepLog{},
+		&healthLogs.SleepAwakeLog{},
+		&healthLogs.SleepInBedLog{},
 		&user.Achievement{},
 		&user.Challenge{},
 		&user.Friendship{},

@@ -13,6 +13,7 @@ import (
 	"firebase.google.com/go/v4/storage"
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
 	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"github.com/sirupsen/logrus"
 )
@@ -212,4 +213,14 @@ func (u *userUsecase) GetUserStatisticsSnapshot(uuid string) (*user.UserStatisti
 	}
 
 	return userStatisticsSnapshot, nil
+}
+
+func (u *userUsecase) GetUserHealthLog(uuid string, healthType healthLogs.HealthDataType) (*user.UserStatistic, error) {
+	userHealthLog, err := u.userRepo.GetUserHealthLog(uuid, healthType)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return userHealthLog, err
 }

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
+	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
 	"gorm.io/gorm"
 )
 
@@ -43,6 +44,7 @@ type UserUsecase interface {
 	UpdateUserStatistics(userStatistic *UserStatistic) error
 	GetUserStatistics(uuid string) (*UserStatistic, error)
 	GetUserStatisticsSnapshot(uuid string) (*UserStatistic, error)
+	GetUserHealthLog(uuid string, healthType healthLogs.HealthDataType) (*UserStatistic, error)
 }
 
 type UserRepository interface {
@@ -60,4 +62,5 @@ type UserRepository interface {
 	UpdateUserStatistics(userStatistic *UserStatistic) error
 	GetUserStatistics(uuid string) (*UserStatistic, error)
 	GetUserStatisticsSnapshot(uuid string) (*UserStatistic, error)
+	GetUserHealthLog(uuid string, healthType healthLogs.HealthDataType) (*UserStatistic, error)
 }
