@@ -9,10 +9,10 @@ import (
 
 type UserStatistic struct {
 	ID                     string                             `json:"id" gorm:"primaryKey;"`
-	WeightLogs             []healthLogs.WeightLog             `json:"weight_log" gorm:"foreignKey:UserStatisticID"`
-	BodyMassIndexLogs      []healthLogs.BodyMassIndexLog      `json:"body_mass_index_log" gorm:"foreignKey:UserStatisticID"`
-	BodyFatPercentageLogs  []healthLogs.BodyFatPercentageLog  `json:"body_fat_percentage_log" gorm:"foreignKey:UserStatisticID"`
-	StepsLogs              []healthLogs.StepsLog              `json:"steps_log" gorm:"foreignKey:UserStatisticID"`
+	WeightLogs             []healthLogs.WeightLog             `json:"weight_logs" gorm:"foreignKey:UserStatisticID"`
+	BodyMassIndexLogs      []healthLogs.BodyMassIndexLog      `json:"body_mass_index_logs" gorm:"foreignKey:UserStatisticID"`
+	BodyFatPercentageLogs  []healthLogs.BodyFatPercentageLog  `json:"body_fat_percentage_logs" gorm:"foreignKey:UserStatisticID"`
+	StepsLogs              []healthLogs.StepsLog              `json:"steps_logs" gorm:"foreignKey:UserStatisticID"`
 	HeartRateLogs          []healthLogs.HeartRateLog          `json:"heart_rate_logs" gorm:"foreignKey:UserStatisticID"`
 	SleepAsleepLogs        []healthLogs.SleepAsleepLog        `json:"sleep_asleep_logs" gorm:"foreignKey:UserStatisticID"`
 	SleepAwakeLogs         []healthLogs.SleepAwakeLog         `json:"sleep_awake_logs" gorm:"foreignKey:UserStatisticID"`

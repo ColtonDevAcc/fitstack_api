@@ -236,16 +236,16 @@ func (ur *UserHandler) UpdateUserStatistics(c *gin.Context) {
 	for i := range statistics.StepsLogs {
 		statistics.StepsLogs[i].UserStatisticID = uuid
 	}
-	statistics.ID = uuid
 
+	fmt.Printf("weight length: %v statistics.WeightLogs: %v ", len(statistics.WeightLogs), len(statistics.WeightLogs))
+
+	statistics.ID = uuid
 	err = ur.UUsecase.UpdateUserStatistics(&statistics)
 	if err != nil {
 		logrus.Error(err)
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 		return
 	}
-
-	fmt.Println(statistics)
 
 	c.JSON(http.StatusOK, nil)
 }
