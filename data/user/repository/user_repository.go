@@ -5,6 +5,7 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
+	"github.com/VooDooStack/FitStackAPI/domain/muscle"
 	"github.com/VooDooStack/FitStackAPI/domain/user"
 	"gorm.io/gorm"
 )
@@ -55,10 +56,28 @@ func (u *userRepository) Update(uuid string) error {
 	return nil
 }
 
-func (u *userRepository) SignUp(user *dto.UserSignUp) (*user.User, error) {
-	//TODO:
+func (u *userRepository) SignUp(user *user.User) error {
+	err := u.Database.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(user).Error; err != nil {
+			return err
+		}
 
-	return nil, nil
+		if err := tx.Create(&user.Profile).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Create(&user.Profile.Statistics).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Create(muscle.Recovery{}).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }
 
 func (u *userRepository) RefreshToken(refresh_token string) (string, error) {
@@ -71,7 +90,7 @@ func (u *userRepository) SignInWithEmailAndPassword(login *dto.LoginInEmailAndPa
 	return "", nil
 }
 
-func (u *userRepository) CheckUniqueFields(user *dto.UserSignUp) error {
+func (u *userRepository) CheckUniqueFields(user *user.User) error {
 	//TODO:
 
 	return nil

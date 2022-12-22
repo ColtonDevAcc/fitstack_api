@@ -55,7 +55,7 @@ func (ur *UserHandler) FetchUser(c *gin.Context) {
 }
 
 func (ur *UserHandler) SignUp(c *gin.Context) {
-	requestedUser := dto.UserSignUp{}
+	requestedUser := user.User{}
 	err := c.ShouldBindJSON(&requestedUser)
 	if err != nil {
 		logrus.Error(err)
@@ -64,13 +64,13 @@ func (ur *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, err := ur.UUsecase.SignUp(&requestedUser, c)
+	err = ur.UUsecase.SignUp(&requestedUser, "", c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, err)
 }
 
 func (ur *UserHandler) DeleteUser(c *gin.Context) {

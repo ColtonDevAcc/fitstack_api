@@ -8,6 +8,7 @@ import (
 
 	"github.com/VooDooStack/FitStackAPI/domain/dto"
 	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
+
 	"gorm.io/gorm"
 )
 
@@ -30,7 +31,7 @@ type User struct {
 }
 
 type UserUsecase interface {
-	SignUp(user *dto.UserSignUp, ctx context.Context) (*User, error)
+	SignUp(user *User, password string, ctx context.Context) error
 	SignInWithToken(ctx context.Context, token string) (*User, error)
 	UpdateUserAvatar(ctx context.Context, uuid string, file *multipart.FileHeader, src io.Reader) (string, error)
 	SignInWithEmailAndPassword(ctx context.Context, login *dto.LoginInEmailAndPassword) (string, error)
@@ -48,7 +49,7 @@ type UserUsecase interface {
 }
 
 type UserRepository interface {
-	SignUp(user *dto.UserSignUp) (*User, error)
+	SignUp(user *User) error
 	SignInWithEmailAndPassword(login *dto.LoginInEmailAndPassword) (string, error)
 	UpdateUserAvatar(uuid string, fileURL string) error
 	RefreshToken(refresh_token string) (string, error)
@@ -57,7 +58,7 @@ type UserRepository interface {
 	GetByEmail(email string) (*User, error)
 	Store(user *User) error
 	Delete(uuid string) error
-	CheckUniqueFields(user *dto.UserSignUp) error
+	CheckUniqueFields(user *User) error
 	GetUserProfile(uuid string) (*UserProfile, error)
 	UpdateUserStatistics(userStatistic *UserStatistic) error
 	GetUserStatistics(uuid string) (*UserStatistic, error)

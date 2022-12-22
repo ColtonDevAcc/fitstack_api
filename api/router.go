@@ -9,20 +9,21 @@ import (
 	"firebase.google.com/go/v4/storage"
 	"github.com/VooDooStack/FitStackAPI/api/middleware"
 	"github.com/VooDooStack/FitStackAPI/config"
-	_workoutHandler "github.com/VooDooStack/FitStackAPI/data/exercise/workout/delivery"
-	_workoutRepo "github.com/VooDooStack/FitStackAPI/data/exercise/workout/repository"
-	_workoutUseCase "github.com/VooDooStack/FitStackAPI/data/exercise/workout/usecase"
-
 	_exerciseHandler "github.com/VooDooStack/FitStackAPI/data/exercise/exercise/delivery"
 	_exerciseRepo "github.com/VooDooStack/FitStackAPI/data/exercise/exercise/repository"
 	_exerciseUseCase "github.com/VooDooStack/FitStackAPI/data/exercise/exercise/usecase"
-
+	_workoutHandler "github.com/VooDooStack/FitStackAPI/data/exercise/workout/delivery"
+	_workoutRepo "github.com/VooDooStack/FitStackAPI/data/exercise/workout/repository"
+	_workoutUseCase "github.com/VooDooStack/FitStackAPI/data/exercise/workout/usecase"
 	_friendshipHandler "github.com/VooDooStack/FitStackAPI/data/friendship/delivery"
 	_friendshipRepo "github.com/VooDooStack/FitStackAPI/data/friendship/repository"
 	_friendshipUsecase "github.com/VooDooStack/FitStackAPI/data/friendship/usecase"
 	_programHandler "github.com/VooDooStack/FitStackAPI/data/program/delivery"
 	_programRepo "github.com/VooDooStack/FitStackAPI/data/program/repository"
 	_programUseCase "github.com/VooDooStack/FitStackAPI/data/program/usecase"
+	_recoveryHandler "github.com/VooDooStack/FitStackAPI/data/recovery/delivery"
+	_recoveryRepo "github.com/VooDooStack/FitStackAPI/data/recovery/repository"
+	_recoveryUseCase "github.com/VooDooStack/FitStackAPI/data/recovery/usecase"
 	_userHandler "github.com/VooDooStack/FitStackAPI/data/user/delivery"
 	_userRepo "github.com/VooDooStack/FitStackAPI/data/user/repository"
 	_userUseCase "github.com/VooDooStack/FitStackAPI/data/user/usecase"
@@ -97,4 +98,12 @@ func setUpHandlers(r *gin.Engine, db *gorm.DB, fa auth.Client, storage *storage.
 	exerciseUsecase := _exerciseUseCase.NewExerciseUsecase(exerciseRepo)
 	_exerciseHandler.NewExerciseHandler(exerciseRG, exerciseUsecase)
 	//===========================Exercise===========================//
+
+	//===========================Recovery===========================//
+	recoveryRG := r.Group("/recovery")
+	recoveryRG.Use(middleware.AuthJWT(&fa))
+	recoveryRepo := _recoveryRepo.NewRecoveryRepository(*db)
+	recoveryUseCase := _recoveryUseCase.NewRecoveryUseCase(recoveryRepo)
+	_recoveryHandler.NewRecoveryHandler(recoveryRG, recoveryUseCase)
+	//===========================Recovery===========================//
 }

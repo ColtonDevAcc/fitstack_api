@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/VooDooStack/FitStackAPI/domain/exercise"
 	healthLogs "github.com/VooDooStack/FitStackAPI/domain/health_logs"
+	"github.com/VooDooStack/FitStackAPI/domain/muscle"
 	"github.com/VooDooStack/FitStackAPI/domain/program"
 	"github.com/VooDooStack/FitStackAPI/domain/routine"
 	"github.com/VooDooStack/FitStackAPI/domain/user"
@@ -12,6 +13,7 @@ import (
 
 // MigrateDB - migrates our database and creates our comment table
 func MigrateDB(db *gorm.DB) error {
+	db.SetupJoinTable(&muscle.Recovery{}, "Muscles", &muscle.RecoveryMuscle{})
 	err := db.AutoMigrate(
 		&program.Program{},
 		&user.User{},
@@ -38,6 +40,8 @@ func MigrateDB(db *gorm.DB) error {
 		&exercise.Workout{},
 		&routine.RoutineSchedule{},
 		&routine.Routine{},
+		&muscle.Recovery{},
+		&muscle.Muscle{},
 	)
 	if err != nil {
 		return err

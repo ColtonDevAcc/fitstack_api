@@ -83,31 +83,31 @@ func (u *userUsecase) Update(uuid string) error {
 	return nil
 }
 
-func (u *userUsecase) SignUp(user *dto.UserSignUp, ctx context.Context) (*user.User, error) {
-	params := (&auth.UserToCreate{}).Email(user.Email).Password(user.Password).PhoneNumber(user.PhoneNumber).DisplayName(user.DisplayName)
+func (u *userUsecase) SignUp(user *user.User, password string, ctx context.Context) error {
+	params := (&auth.UserToCreate{}).Email(user.Email).Password(password).PhoneNumber(user.PhoneNumber).DisplayName(user.Profile.DisplayName)
 
 	err := u.userRepo.CheckUniqueFields(user)
 	if err != nil {
 		logrus.Error(err)
-		return nil, err
+		return err
 	}
 
 	fbu, err := u.client.CreateUser(ctx, params)
 	if err != nil {
 		logrus.Error(err)
-		return nil, err
+		return err
 	}
 
-	user.Id = fbu.UID
+	user.ID = fbu.UID
 	user.CreatedAt = time.Now()
 
-	newUser, err := u.userRepo.SignUp(user)
+	err = u.userRepo.SignUp(user)
 	if err != nil {
 		logrus.Error(err)
-		return nil, err
+		return err
 	}
 
-	return newUser, nil
+	return nil
 }
 
 func (u *userUsecase) SignInWithToken(ctx context.Context, token string) (*user.User, error) {
